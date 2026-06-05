@@ -26,6 +26,7 @@ export default function FeedbackButton() {
   const [data, setData] = useState<FeedbackData>(EMPTY);
   const [formState, setFormState] = useState<FormState>('idle');
   const [errors, setErrors] = useState<Partial<Record<keyof FeedbackData, string>>>({});
+  const [submitError, setSubmitError] = useState('');
 
   function set(field: keyof FeedbackData, value: string) {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -44,8 +45,26 @@ export default function FeedbackButton() {
     e.preventDefault();
     if (!validate()) return;
     setFormState('submitting');
-    await new Promise((r) => setTimeout(r, 900));
-    setFormState('success');
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: data.name || 'Anonymous',
+          subject: data.subject,
+          type: data.type,
+          message: data.message,
+          _subject: `Feedback [${data.type}]: ${data.subject}`,
+          _source: 'Floating Feedback Button',
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setFormState('success');
+    } catch {
+      setFormState('idle');
+      setSubmitError('Failed to send. Please try again.');
+    }
   }
 
   function handleClose() {
@@ -190,6 +209,10 @@ export default function FeedbackButton() {
                       <p className="text-rose-500 text-xs mt-1">{errors.message}</p>
                     )}
                   </div>
+
+                  {submitError && (
+                    <p className="text-rose-500 text-xs text-center bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{submitError}</p>
+                  )}
 
                   <button
                     type="submit"

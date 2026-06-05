@@ -23,6 +23,7 @@ function GeneralFeedbackForm() {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<FormState>('idle');
+  const [submitError, setSubmitError] = useState('');
 
   function validate() {
     const e: Record<string, string> = {};
@@ -36,8 +37,26 @@ function GeneralFeedbackForm() {
     e.preventDefault();
     if (!validate()) return;
     setState('submitting');
-    await new Promise((r) => setTimeout(r, 900));
-    setState('success');
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: name || 'Anonymous',
+          subject,
+          type,
+          message,
+          _subject: `Feedback [${type}]: ${subject}`,
+          _source: 'Feedback Page',
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setState('success');
+    } catch {
+      setState('idle');
+      setSubmitError('Failed to send. Please try again.');
+    }
   }
 
   if (state === 'success') {
@@ -130,6 +149,10 @@ function GeneralFeedbackForm() {
         {errors.message && <p className="text-rose-500 text-xs mt-1">{errors.message}</p>}
       </div>
 
+      {submitError && (
+        <p className="text-rose-500 text-xs text-center bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{submitError}</p>
+      )}
+
       <button
         type="submit"
         disabled={state === 'submitting'}
@@ -171,6 +194,7 @@ function ReportIssueForm() {
   const [description, setDescription] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<FormState>('idle');
+  const [submitError, setSubmitError] = useState('');
 
   function validate() {
     const e: Record<string, string> = {};
@@ -183,8 +207,25 @@ function ReportIssueForm() {
     e.preventDefault();
     if (!validate()) return;
     setState('submitting');
-    await new Promise((r) => setTimeout(r, 800));
-    setState('success');
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          lecture: lecture || 'Not specified',
+          issueType,
+          description,
+          _subject: `Issue Report${lecture ? `: ${lecture}` : ''}`,
+          _source: 'Feedback Page — Report Issue',
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setState('success');
+    } catch {
+      setState('idle');
+      setSubmitError('Failed to submit. Please try again.');
+    }
   }
 
   if (state === 'success') {
@@ -256,6 +297,10 @@ function ReportIssueForm() {
         {errors.description && <p className="text-rose-500 text-xs mt-1">{errors.description}</p>}
       </div>
 
+      {submitError && (
+        <p className="text-rose-500 text-xs text-center bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{submitError}</p>
+      )}
+
       <button
         type="submit"
         disabled={state === 'submitting'}
@@ -284,6 +329,7 @@ function FeatureRequestForm() {
   const [reason, setReason] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<FormState>('idle');
+  const [submitError, setSubmitError] = useState('');
 
   function validate() {
     const e: Record<string, string> = {};
@@ -297,8 +343,24 @@ function FeatureRequestForm() {
     e.preventDefault();
     if (!validate()) return;
     setState('submitting');
-    await new Promise((r) => setTimeout(r, 900));
-    setState('success');
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          feature,
+          reason,
+          _subject: `Feature Request: ${feature}`,
+          _source: 'Feedback Page — Feature Request',
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setState('success');
+    } catch {
+      setState('idle');
+      setSubmitError('Failed to submit. Please try again.');
+    }
   }
 
   if (state === 'success') {
@@ -352,6 +414,10 @@ function FeatureRequestForm() {
         />
         {errors.reason && <p className="text-rose-500 text-xs mt-1">{errors.reason}</p>}
       </div>
+
+      {submitError && (
+        <p className="text-rose-500 text-xs text-center bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{submitError}</p>
+      )}
 
       <button
         type="submit"

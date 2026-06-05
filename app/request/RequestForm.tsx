@@ -13,20 +13,11 @@ interface FormData {
 
 const EMPTY: FormData = { subject: '', reason: '', notes: '', email: '' };
 
-/*
-  To wire up a real backend, replace handleSubmit with a fetch to Formspree:
-
-  const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify(data),
-  });
-*/
-
 export default function RequestForm() {
   const [data, setData] = useState<FormData>(EMPTY);
   const [formState, setFormState] = useState<FormState>('idle');
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [submitError, setSubmitError] = useState('');
 
   function set(field: keyof FormData, value: string) {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -45,9 +36,27 @@ export default function RequestForm() {
     e.preventDefault();
     if (!validate()) return;
     setFormState('submitting');
-    // Simulate a short delay (replace with real fetch in production)
-    await new Promise((r) => setTimeout(r, 900));
-    setFormState('success');
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          subject: data.subject,
+          reason: data.reason,
+          notes: data.notes || 'None',
+          email: data.email || 'Not provided',
+          _subject: `Subject Request: ${data.subject}`,
+          _source: 'Request Subject Page',
+          _replyto: data.email || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setFormState('success');
+    } catch {
+      setFormState('idle');
+      setSubmitError('Failed to submit. Please try again.');
+    }
   }
 
   function reset() {
@@ -155,6 +164,10 @@ export default function RequestForm() {
           className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-150 bg-white"
         />
       </div>
+
+      {submitError && (
+        <p className="text-rose-500 text-xs text-center bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{submitError}</p>
+      )}
 
       {/* Submit */}
       <button

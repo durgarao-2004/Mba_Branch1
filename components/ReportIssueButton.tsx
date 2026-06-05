@@ -22,6 +22,7 @@ export default function ReportIssueButton({ lectureTitle }: Props) {
   const [issueType, setIssueType] = useState<IssueType>('incorrect-concept');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,8 +31,25 @@ export default function ReportIssueButton({ lectureTitle }: Props) {
       return;
     }
     setState('submitting');
-    await new Promise((r) => setTimeout(r, 800));
-    setState('success');
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          lecture: lectureTitle,
+          issueType,
+          description,
+          _subject: `Issue Report: ${lectureTitle}`,
+          _source: 'Report Issue Button',
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setState('success');
+    } catch {
+      setState('open');
+      setSubmitError('Failed to submit. Please try again.');
+    }
   }
 
   function reset() {
@@ -119,6 +137,10 @@ export default function ReportIssueButton({ lectureTitle }: Props) {
           />
           {error && <p className="text-rose-500 text-xs mt-1">{error}</p>}
         </div>
+
+        {submitError && (
+          <p className="text-rose-500 text-xs bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{submitError}</p>
+        )}
 
         <button
           type="submit"

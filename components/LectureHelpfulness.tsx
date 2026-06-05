@@ -28,11 +28,32 @@ const RATINGS: { value: Rating; emoji: string; label: string; activeClass: strin
 export default function LectureHelpfulness() {
   const [selected, setSelected] = useState<Rating | null>(null);
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  function handleSelect(rating: Rating) {
-    if (done) return;
+  async function handleSelect(rating: Rating) {
+    if (done || submitting) return;
     setSelected(rating);
-    setTimeout(() => setDone(true), 500);
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const res = await fetch('https://formspree.io/f/xwvjvvpz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          rating,
+          _subject: `Lecture Helpfulness: ${rating}`,
+          _source: 'Lecture Helpfulness Widget',
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setDone(true);
+    } catch {
+      setSelected(null);
+      setSubmitError('Could not submit rating. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -65,6 +86,9 @@ export default function LectureHelpfulness() {
               </button>
             ))}
           </div>
+          {submitError && (
+            <p className="text-rose-500 text-xs mt-3">{submitError}</p>
+          )}
           <p className="text-xs text-slate-400 mt-4">
             Help improve lecture quality — takes just one click
           </p>
