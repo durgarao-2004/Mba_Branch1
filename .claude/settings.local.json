@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"/Users/harsha/Desktop/MBA AI/app/about\" \\\\ *)",
+      "Bash(npm install *)",
+      "Bash(node_modules/.bin/next --version)",
+      "Bash(npm run *)",
+      "Bash(pandoc --version)",
+      "Bash(python3 -c \"import docx; print\\('python-docx ok'\\)\")",
+      "Bash(python3 -c \"import weasyprint; print\\('weasyprint ok'\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(python3 -c \"import docx; print\\('python-docx ready'\\)\")",
+      "Bash(python3 -c \"from docx import Document; print\\('python-docx import OK'\\)\")",
+      "Bash(python3 -c \"import reportlab; print\\('reportlab ok'\\)\")",
+      "Bash(python3.12 -c \"from docx import Document; print\\('OK'\\)\")",
+      "Bash(python3.12 -c \"import reportlab; print\\('reportlab ok'\\)\")",
+      "Bash(python3.12 -c \"import fpdf; print\\('fpdf ok'\\)\")",
+      "Bash(python3.12 scripts/gen_docx.py)",
+      "Bash(python3.12 scripts/gen_pdf.py)",
+      "Bash(python3.12 -c ' *)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"Demo routes still present: $\\(npm run build 2>&1)",
+      "Bash(CLAUDE_CODE_TMPDIR=/tmp grep -rn --include=\"*.tsx\" -i \"ai hub\\\\|ai-powered\\\\|ai generated\\\\|ai summaries\\\\|AI chatbot\" \"/Users/harsha/Desktop/MBA AI/app\" \"/Users/harsha/Desktop/MBA AI/components\")",
+      "Bash(python3.12 -c \"import json; d=json.load\\(open\\('/Users/harsha/Desktop/MBA AI/content/subjects/financial-management/lectures/introduction-to-financial-management.json'\\)\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(python3.12 scripts/gen_maneco_docx.py)",
+      "Bash(python3.12 scripts/gen_maneco_pdf.py)"
+    ],
+    "additionalDirectories": [
+      "/Users/harsha/Desktop/MBA AI/app/subjects/[subject]"
+    ]
+  }
+}
