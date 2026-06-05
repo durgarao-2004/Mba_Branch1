@@ -5,6 +5,8 @@ import QuizComponent from '@/components/QuizComponent';
 import DownloadButtons from '@/components/DownloadButtons';
 import LectureSidebar, { SidebarSection } from '@/components/LectureSidebar';
 import { TagBadge, DifficultyBadge } from '@/components/TagBadge';
+import LectureHelpfulness from '@/components/LectureHelpfulness';
+import ReportIssueButton from '@/components/ReportIssueButton';
 import { subjects, getSubjectBySlug } from '@/lib/subjects';
 import { getLecture, getAllLectureSlugs } from '@/lib/content';
 import { LectureTag } from '@/types';
@@ -109,13 +111,16 @@ export default async function LecturePage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Download buttons */}
+          {/* Download buttons + report issue */}
           <div className="mb-10">
             <DownloadButtons
               pdfPath={lecture.pdfPath}
               docxPath={lecture.docxPath}
               title={lecture.title}
             />
+            <div className="mt-3">
+              <ReportIssueButton lectureTitle={lecture.title} />
+            </div>
           </div>
 
           {/* ── Lecture Summary ──────────────────────────── */}
@@ -235,8 +240,11 @@ export default async function LecturePage({ params }: PageProps) {
             <QuizComponent questions={lecture.quiz} />
           </section>
 
+          {/* Lecture helpfulness rating */}
+          <LectureHelpfulness />
+
           {/* Back navigation */}
-          <div className="mt-12 pt-8 border-t border-slate-200">
+          <div className="mt-10 pt-8 border-t border-slate-200">
             <Link href={`/subjects/${subjectSlug}`} className="btn-secondary">
               ← Back to {subject.name}
             </Link>

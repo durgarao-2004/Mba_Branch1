@@ -23,7 +23,20 @@
       "Bash(CLAUDE_CODE_TMPDIR=/tmp grep -rn --include=\"*.tsx\" -i \"ai hub\\\\|ai-powered\\\\|ai generated\\\\|ai summaries\\\\|AI chatbot\" \"/Users/harsha/Desktop/MBA AI/app\" \"/Users/harsha/Desktop/MBA AI/components\")",
       "Bash(python3.12 -c \"import json; d=json.load\\(open\\('/Users/harsha/Desktop/MBA AI/content/subjects/financial-management/lectures/introduction-to-financial-management.json'\\)\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
       "Bash(python3.12 scripts/gen_maneco_docx.py)",
-      "Bash(python3.12 scripts/gen_maneco_pdf.py)"
+      "Bash(python3.12 scripts/gen_maneco_pdf.py)",
+      "Bash(echo \"Dev server starting... PID=$!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/feedback)",
+      "Bash(curl -s -o /dev/null -w \" %{http_code}\" http://localhost:3000/request)",
+      "Bash(curl -s -o /dev/null -w \" %{http_code}\" http://localhost:3000/subjects/financial-management/introduction-to-financial-management)",
+      "Bash(curl -sL -o /dev/null -w \"%{http_code}\" http://localhost:3000/feedback)",
+      "Bash(curl -sL -o /dev/null -w \" %{http_code}\" http://localhost:3000/request)",
+      "Bash(curl -sL -o /dev/null -w \" %{http_code}\" http://localhost:3000/subjects/financial-management/introduction-to-financial-management)",
+      "Bash(curl -sL http://localhost:3000/feedback)",
+      "Bash(curl -sL http://localhost:3000/request)",
+      "Bash(curl -sL http://localhost:3000/subjects/financial-management/introduction-to-financial-management)",
+      "Bash(curl -sL http://localhost:3000/)",
+      "Read(//tmp/**)"
     ],
     "additionalDirectories": [
       "/Users/harsha/Desktop/MBA AI/app/subjects/[subject]"

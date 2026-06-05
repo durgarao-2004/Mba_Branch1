@@ -8,6 +8,12 @@ const platformLinks = [
   { href: '/about', label: 'About' },
 ];
 
+const feedbackLinks = [
+  { href: '/feedback', label: 'Feedback' },
+  { href: '/request', label: 'Request Subject' },
+  { href: '/feedback#report', label: 'Report Issue' },
+];
+
 const subjectLinks = [
   { href: '/subjects/financial-management', label: 'Financial Management' },
   { href: '/subjects/managerial-economics', label: 'Managerial Economics' },
@@ -27,7 +33,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-400">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
 
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
@@ -75,6 +81,25 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Feedback */}
+          <div>
+            <h3 className="font-semibold text-white text-sm mb-4">Community</h3>
+            <ul className="space-y-2.5">
+              {feedbackLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm hover:text-white transition-colors duration-150">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-5 p-3 bg-slate-800 rounded-lg border border-slate-700">
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Help us improve — your feedback shapes the platform.
+              </p>
+            </div>
           </div>
 
           {/* Legal */}
