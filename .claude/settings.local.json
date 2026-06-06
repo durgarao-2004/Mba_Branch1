@@ -36,7 +36,8 @@
       "Bash(curl -sL http://localhost:3000/request)",
       "Bash(curl -sL http://localhost:3000/subjects/financial-management/introduction-to-financial-management)",
       "Bash(curl -sL http://localhost:3000/)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "/Users/harsha/Desktop/MBA AI/app/subjects/[subject]"

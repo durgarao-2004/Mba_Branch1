@@ -7,6 +7,7 @@ import LectureSidebar, { SidebarSection } from '@/components/LectureSidebar';
 import { TagBadge, DifficultyBadge } from '@/components/TagBadge';
 import LectureHelpfulness from '@/components/LectureHelpfulness';
 import ReportIssueButton from '@/components/ReportIssueButton';
+import QuickRevision from '@/components/QuickRevision';
 import { subjects, getSubjectBySlug } from '@/lib/subjects';
 import { getLecture, getAllLectureSlugs } from '@/lib/content';
 import { LectureTag } from '@/types';
@@ -15,14 +16,15 @@ interface PageProps {
   params: Promise<{ subject: string; lecture: string }>;
 }
 
-const SIDEBAR_SECTIONS: SidebarSection[] = [
-  { id: 'summary',    label: 'Lecture Summary',     icon: '📋' },
-  { id: 'concepts',   label: 'Key Concepts',         icon: '🔑' },
-  { id: 'notes',      label: 'Detailed Notes',       icon: '📝' },
-  { id: 'example',    label: 'Real-World Example',   icon: '🌍' },
-  { id: 'case-study', label: 'Case Study',           icon: '📊' },
-  { id: 'takeaways',  label: 'Key Takeaways',        icon: '✅' },
-  { id: 'quiz',       label: 'Knowledge Quiz',       icon: '🧠' },
+const BASE_SIDEBAR_SECTIONS: SidebarSection[] = [
+  { id: 'summary',        label: 'Lecture Summary',     icon: '📋' },
+  { id: 'quick-revision', label: '5-Min Revision',      icon: '⚡' },
+  { id: 'concepts',       label: 'Key Concepts',        icon: '🔑' },
+  { id: 'notes',          label: 'Detailed Notes',      icon: '📝' },
+  { id: 'example',        label: 'Real-World Example',  icon: '🌍' },
+  { id: 'case-study',     label: 'Case Study',          icon: '📊' },
+  { id: 'takeaways',      label: 'Key Takeaways',       icon: '✅' },
+  { id: 'quiz',           label: 'Knowledge Quiz',      icon: '🧠' },
 ];
 
 export async function generateStaticParams() {
@@ -51,6 +53,10 @@ export default async function LecturePage({ params }: PageProps) {
   const subject = getSubjectBySlug(subjectSlug);
   const lecture = getLecture(subjectSlug, lectureSlug);
   if (!subject || !lecture) notFound();
+
+  const sidebarSections = lecture.quickRevision
+    ? BASE_SIDEBAR_SECTIONS
+    : BASE_SIDEBAR_SECTIONS.filter((s) => s.id !== 'quick-revision');
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-14">
@@ -133,6 +139,16 @@ export default async function LecturePage({ params }: PageProps) {
               <p className="text-slate-700 leading-relaxed text-sm sm:text-base">{lecture.summary}</p>
             </div>
           </section>
+
+          {/* ── 5-Minute Revision ───────────────────────── */}
+          {lecture.quickRevision && (
+            <QuickRevision
+              data={lecture.quickRevision}
+              subjectColor={subject.colorClass}
+              subjectBg={subject.bgClass}
+              subjectBorder={subject.borderClass}
+            />
+          )}
 
           {/* ── Key Concepts ─────────────────────────────── */}
           <section id="concepts" className="mb-8 scroll-mt-24">
@@ -254,7 +270,7 @@ export default async function LecturePage({ params }: PageProps) {
         {/* ─── Sticky sidebar (desktop) ────────────────────── */}
         <aside className="hidden lg:block w-52 flex-shrink-0">
           <div className="sticky top-24">
-            <LectureSidebar sections={SIDEBAR_SECTIONS} lectureTitle={lecture.title} />
+            <LectureSidebar sections={sidebarSections} lectureTitle={lecture.title} />
 
             {/* Metadata card */}
             <div className="mt-6 bg-white border border-slate-200 rounded-xl p-4 text-xs space-y-2.5">

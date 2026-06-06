@@ -221,5 +221,71 @@
   ],
 
   "pdfPath": "/downloads/introduction-to-managerial-economics.pdf",
-  "docxPath": "/downloads/introduction-to-managerial-economics.docx"
+  "docxPath": "/downloads/introduction-to-managerial-economics.docx",
+
+  "quickRevision": {
+    "summaryPoints": [
+      "Economics = science of scarcity and choice — every business decision is fundamentally an economic decision",
+      "Adam Smith (1776) → Alfred Marshall (1890) → John Maynard Keynes (1936): each theory emerged from failure of the previous",
+      "Great Depression (1929–30): proved markets DON'T self-correct → Keynes: government must intervene",
+      "3 Economic Functions: Production → Distribution → Consumption (all three must operate for economic health)",
+      "Ceteris Paribus ('other things equal'): isolates one cause-effect relationship by holding all else constant",
+      "Rationality: consumers maximize utility; producers maximize profit — foundational assumption of all economic models",
+      "Microeconomics: individual unit (one firm, one consumer); Macroeconomics: entire economy (GDP, inflation, policy)",
+      "Positive Economics: what IS — factual, verifiable; Normative Economics: what SHOULD BE — value judgements",
+      "Scarcity: unlimited wants vs limited resources → every allocation decision involves a trade-off",
+      "India survived COVID (diversified demand + Keynesian intervention); Venezuela collapsed (resource dependency + failed normative policy)"
+    ],
+    "importantTerms": [
+      { "term": "Managerial Economics", "definition": "Bridge between pure economic theory and practical business decision-making" },
+      { "term": "Scarcity", "definition": "Unlimited human wants vs limited resources — the central problem economics solves" },
+      { "term": "Ceteris Paribus", "definition": "'Other things equal' — holds all variables except one constant to isolate cause-effect" },
+      { "term": "Rationality", "definition": "Assumption that agents choose options maximizing utility (consumers) or profit (producers)" },
+      { "term": "Microeconomics", "definition": "Study of individual economic units — one consumer, firm, or industry" },
+      { "term": "Macroeconomics", "definition": "Study of the economy as a whole — GDP, inflation, national employment, government policy" },
+      { "term": "Positive Economics", "definition": "Objective, factual statements about economic reality that can be tested and verified" },
+      { "term": "Normative Economics", "definition": "Value-based prescriptions about what the economy should be — cannot be resolved by data alone" },
+      { "term": "Fiscal Policy", "definition": "Government control of spending and taxation to stimulate or cool the economy" },
+      { "term": "Monetary Policy", "definition": "Central bank (RBI) control of interest rates and money supply to influence borrowing and investment" },
+      { "term": "Keynesian Economics", "definition": "Government must actively intervene when markets fail — fiscal and monetary tools prevent depressions" },
+      { "term": "Guns vs Butter", "definition": "Classic dilemma: scarce resources must be allocated between competing priorities (defence vs welfare)" }
+    ],
+    "examTips": [
+      "Micro vs Macro: Micro = water in your glass (individual unit); Macro = water in the reservoir (the whole system)",
+      "Positive vs Normative: Positive = what IS (testable, factual); Normative = what SHOULD BE (opinion, value judgement)",
+      "Ceteris Paribus is why the Law of Demand works — price↑ demand↓ ONLY IF everything else stays the same",
+      "Great Depression → Keynes: markets do NOT always self-correct; active government intervention is essential",
+      "Classical (Adam Smith): minimal govt, invisible hand, self-regulating markets; Keynesian: active fiscal & monetary policy",
+      "Venezuela = normative policy (price controls) ignoring positive reality → shortages; India COVID = Keynesian policy saved economy",
+      "Paradox of Thrift: individually rational saving during downturn → collectively irrational recession (Keynesian insight)",
+      "Rationality assumption: not perfectly realistic (behavioral economics challenges it), but gives analytical consistency to models"
+    ],
+    "keyFrameworks": [
+      "Historical Evolution of Economics: Adam Smith (1776, Classical) → Alfred Marshall (1890, Neo-Classical) → Keynes (1936, Modern Macro)",
+      "3 Economic Functions: Production | Distribution | Consumption",
+      "Guns vs Butter Dilemma → Scarcity forces every allocation choice",
+      "Micro vs Macro: Individual unit (firm/consumer) vs Entire economy (GDP/inflation/policy)",
+      "Positive vs Normative: Factual description (what is) vs Value prescription (what should be)",
+      "2 Foundational Assumptions: Ceteris Paribus | Rationality",
+      "Government Policy Tools: Fiscal Policy (spending/taxation) | Monetary Policy (interest rates/money supply)"
+    ],
+    "formulaRevision": [
+      { "label": "Law of Demand", "formula": "Price ↑ → Quantity Demanded ↓ (Ceteris Paribus)" },
+      { "label": "Law of Supply", "formula": "Price ↑ → Quantity Supplied ↑ (Ceteris Paribus)" },
+      { "label": "Market Equilibrium", "formula": "Quantity Demanded = Quantity Supplied (at the equilibrium price)" },
+      { "label": "GDP (concept)", "formula": "Total market value of all final goods and services produced in an economy in one year" },
+      { "label": "MR = MC", "formula": "Profit-maximization rule: produce up to the point where Marginal Revenue = Marginal Cost" }
+    ],
+    "likelyQuestions": [
+      "Define Managerial Economics. How does it bridge economic theory and business decision-making?",
+      "Trace the evolution of economic thought from Adam Smith to Keynes. What triggered each transition?",
+      "Explain the role of government in the economy post-Great Depression. What tools does it use?",
+      "Distinguish between Microeconomics and Macroeconomics with examples.",
+      "Differentiate between Positive and Normative Economics with examples.",
+      "Explain the Ceteris Paribus assumption. Why is it necessary in economic analysis?",
+      "What is scarcity? Explain the Guns vs Butter dilemma.",
+      "Explain the three basic economic functions: Production, Distribution, and Consumption.",
+      "How did India's economy remain resilient during COVID-19? What economic principles explain this?"
+    ]
+  }
 }

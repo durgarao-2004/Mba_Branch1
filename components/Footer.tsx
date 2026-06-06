@@ -3,6 +3,8 @@ import Link from 'next/link';
 const platformLinks = [
   { href: '/', label: 'Home' },
   { href: '/subjects', label: 'All Subjects' },
+  { href: '/case-studies', label: 'Case Study Hub' },
+  { href: '/attendance', label: 'Attendance Tool' },
   { href: '/search', label: 'Search Lectures' },
   { href: '/request', label: 'Request a Subject' },
   { href: '/about', label: 'About' },
@@ -10,6 +12,7 @@ const platformLinks = [
 
 const feedbackLinks = [
   { href: '/feedback', label: 'Feedback' },
+  { href: '/case-studies#submit', label: 'Submit Case Idea' },
   { href: '/request', label: 'Request Subject' },
   { href: '/feedback#report', label: 'Report Issue' },
 ];

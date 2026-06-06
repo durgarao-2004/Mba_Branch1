@@ -252,5 +252,69 @@
   ],
 
   "pdfPath": "/downloads/introduction-to-financial-management.pdf",
-  "docxPath": "/downloads/introduction-to-financial-management.docx"
+  "docxPath": "/downloads/introduction-to-financial-management.docx",
+
+  "quickRevision": {
+    "summaryPoints": [
+      "Financial Management = planning, organizing, directing & controlling of funds — not just bookkeeping",
+      "Short-term funds cover daily operations (wages, raw materials); long-term funds cover capital investments (machinery, tech)",
+      "Goal of the firm → Wealth Maximization (not just profit maximization)",
+      "4 Functional Areas: Investment Decision → Financing Decision → Dividend Decision → Working Capital Decision",
+      "Profit Maximization ignores time value of money and risk; Wealth Maximization accounts for both",
+      "MR = MC is the profit-maximization condition — stop producing additional units at this point",
+      "Agency Problem: managers (agents) may act in self-interest rather than shareholders' (principals') interest",
+      "Amul = Cooperative Society — one member, one vote; eliminated middlemen to maximize farmer wealth",
+      "Capital contributed by shareholders = LIABILITY in balance sheet (entity concept — company ≠ owners)"
+    ],
+    "importantTerms": [
+      { "term": "Financial Management", "definition": "Strategic planning, organizing, directing & controlling of financial activities" },
+      { "term": "Investment Decision", "definition": "Where to deploy funds for maximum return — evaluated using NPV, IRR, Payback Period" },
+      { "term": "Financing Decision", "definition": "How to raise funds — equity (shares) vs debt (loans); determines capital structure" },
+      { "term": "Dividend Decision", "definition": "How much profit to distribute to shareholders vs retain for future growth" },
+      { "term": "Working Capital", "definition": "Funds reserved for day-to-day operations; ensures liquidity for short-term obligations" },
+      { "term": "Profit Maximization", "definition": "Highest accounting profit in the short run; ignores time value of money and risk" },
+      { "term": "Wealth Maximization", "definition": "Maximize long-term market value of the firm; accounts for time value, risk, and sustainability" },
+      { "term": "Agency Problem", "definition": "Conflict where managers act in own interest (job security, perks) rather than shareholders' wealth" },
+      { "term": "MR = MC", "definition": "Marginal Revenue = Marginal Cost — the point where profit is maximized; produce up to here, not beyond" },
+      { "term": "ESOP", "definition": "Employee Stock Option Plan — aligns manager incentives with shareholder interests to reduce agency problem" },
+      { "term": "Cooperative Society", "definition": "Democratic business form; one member one vote regardless of capital; Amul is the classic example" },
+      { "term": "Joint Stock Company", "definition": "Separate legal entity; limited liability; perpetual succession; owned through tradeable shares" }
+    ],
+    "examTips": [
+      "Profit Max vs Wealth Max: PM = short-term, ignores time value and risk. WM = long-term, accounts for both. WM is the superior and preferred objective",
+      "Agency Problem: always link to solutions — ESOPs, independent board of directors, mandatory audits, SEBI regulations",
+      "MR = MC rule: produce MORE when MR > MC; produce LESS when MR < MC; profit is maximized exactly AT MR = MC",
+      "Three definitions: Guthmann & Dougall (plan, raise, control, administer); Bradley (judicious use of capital); Massie (operational efficiency)",
+      "Partnership Deed: not legally compulsory to register, but an unregistered deed cannot be enforced in court",
+      "Amul model: Cooperative Society — one member one vote, profits shared proportionally, no middleman",
+      "Capital from shareholders = LIABILITY (not asset) in balance sheet — entity concept separates company from owners",
+      "Uber driver analogy → Profit Max failure; MBA student → Wealth Max logic (short-term sacrifice for long-term gain)"
+    ],
+    "keyFrameworks": [
+      "4 Functional Areas of FM → Investment Decision | Financing Decision | Dividend Decision | Working Capital Decision",
+      "4 Forms of Business → Sole Proprietorship | Partnership | Cooperative Society | Joint Stock Company",
+      "3 Classic Definitions → Guthmann & Dougall | J.F. Bradley | Massie",
+      "5 Objectives of FM → Adequate funding | Maximize shareholder returns | Optimize resources | Sound investment | Risk management",
+      "Profit Max vs Wealth Max → Short-term vs Long-term | Accounting profit vs Market value | Ignores risk vs Accounts for risk",
+      "Agency Problem → Cause: separation of ownership & management | Solutions: ESOPs, Independent Board, SEBI, Audits"
+    ],
+    "formulaRevision": [
+      { "label": "Profit Maximization Condition", "formula": "MR = MC (Marginal Revenue = Marginal Cost)" },
+      { "label": "Marginal Revenue (MR)", "formula": "Additional revenue earned from producing one more unit" },
+      { "label": "Marginal Cost (MC)", "formula": "Additional cost incurred from producing one more unit" },
+      { "label": "WACC (concept)", "formula": "Weighted Average Cost of Capital — minimized by optimal equity-debt mix in Financing Decision" },
+      { "label": "Wealth Maximization basis", "formula": "NPV = Present Value of future cash flows − Initial Investment (accounts for time value & risk)" }
+    ],
+    "likelyQuestions": [
+      "Define Financial Management. Explain its objectives.",
+      "Compare Profit Maximization and Wealth Maximization as financial objectives. Which is superior and why?",
+      "Explain the Agency Problem with examples. How can it be resolved?",
+      "What are the four functional areas of Financial Management? Explain each briefly.",
+      "Distinguish between the four forms of business organization with examples.",
+      "Explain the MR = MC rule for profit maximization with a diagram.",
+      "Explain the three classical definitions of Financial Management.",
+      "How does Financial Management relate to other business disciplines?",
+      "What financial management lessons does the Amul cooperative case study offer?"
+    ]
+  }
 }

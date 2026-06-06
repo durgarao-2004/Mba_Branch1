@@ -70,7 +70,19 @@ export default function LectureSidebar({ sections, lectureTitle }: LectureSideba
         })}
       </ul>
 
-      <div className="mt-6 pt-5 border-t border-slate-100">
+      <div className="mt-6 pt-5 border-t border-slate-100 space-y-2">
+        <a
+          href="#quick-revision"
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById('quick-revision')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setActiveId('quick-revision');
+          }}
+          className="flex items-center gap-2 w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all duration-150"
+        >
+          <span>⚡</span>
+          5-Min Revision
+        </a>
         <a
           href="#quiz"
           onClick={(e) => {

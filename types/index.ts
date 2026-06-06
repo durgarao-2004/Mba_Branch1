@@ -18,6 +18,25 @@ export type LectureTag =
   | 'core-concept'
   | 'revision-important';
 
+export interface QuickRevisionTerm {
+  term: string;
+  definition: string;
+}
+
+export interface QuickRevisionFormula {
+  label: string;
+  formula: string;
+}
+
+export interface QuickRevision {
+  summaryPoints: string[];
+  importantTerms: QuickRevisionTerm[];
+  examTips: string[];
+  keyFrameworks: string[];
+  formulaRevision: QuickRevisionFormula[];
+  likelyQuestions: string[];
+}
+
 export interface Lecture {
   id: string;
   title: string;
@@ -36,6 +55,7 @@ export interface Lecture {
   quiz: QuizQuestion[];
   pdfPath: string;
   docxPath: string;
+  quickRevision?: QuickRevision;
 }
 
 export interface LectureMeta {

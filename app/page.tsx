@@ -147,8 +147,74 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Request a Subject */}
+      {/* Attendance Tool CTA */}
+      <section className="py-16 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-900 rounded-2xl p-8 sm:p-12 text-center">
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500 rounded-full blur-3xl" />
+            </div>
+            <div className="relative">
+              <span className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+                📊 Attendance Survival Tool
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                Track Your Attendance
+              </h2>
+              <p className="text-slate-300 max-w-xl mx-auto mb-7 text-sm sm:text-base leading-relaxed">
+                Instantly know if you can skip a class — or how many you need to attend to stay eligible. Fast, free, and no login required.
+              </p>
+              <Link
+                href="/attendance"
+                className="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-900 font-semibold px-7 py-3 rounded-xl transition-colors duration-150"
+              >
+                📊 Open Attendance Tool
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Case Study Hub CTA */}
       <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 rounded-2xl p-8 sm:p-12 text-center">
+            <div className="absolute inset-0 opacity-15 pointer-events-none">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500 rounded-full blur-3xl" />
+            </div>
+            <div className="relative">
+              <span className="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+                📖 New — Case Study Hub
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                Explore real business case studies
+              </h2>
+              <p className="text-slate-300 max-w-xl mx-auto mb-7 text-sm sm:text-base leading-relaxed">
+                Browse classroom-inspired MBA business scenarios by subject. Submit your own case study idea and help shape the hub.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/case-studies"
+                  className="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-900 font-semibold px-7 py-3 rounded-xl transition-colors duration-150"
+                >
+                  📖 Explore Case Studies
+                </Link>
+                <Link
+                  href="/case-studies#submit"
+                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-7 py-3 rounded-xl transition-colors duration-150"
+                >
+                  📝 Submit an Idea
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Request a Subject */}
+      <section className="pb-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-2xl p-8 sm:p-12 text-center">
             <div className="absolute inset-0 opacity-10">
@@ -160,7 +226,7 @@ export default function HomePage() {
                 📬 Community Driven
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                Don't see your subject?
+                Don&apos;t see your subject?
               </h2>
               <p className="text-slate-300 max-w-xl mx-auto mb-7 text-sm sm:text-base leading-relaxed">
                 Request a new subject and our team will prioritize adding it to the platform.
