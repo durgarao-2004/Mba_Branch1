@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FeedbackButton from '@/components/FeedbackButton';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: {
@@ -31,6 +32,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <FeedbackButton />
+        <Analytics />
       </body>
     </html>
   );
