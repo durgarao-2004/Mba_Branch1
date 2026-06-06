@@ -8,7 +8,27 @@ export const metadata: Metadata = {
     'Real classroom-inspired MBA business scenarios and practical management discussions. Explore case study categories and submit your own business case idea.',
 };
 
-const categories = [
+type CaseStudyEntry = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  tags: string[];
+};
+
+type Category = {
+  id: string;
+  icon: string;
+  label: string;
+  description: string;
+  gradient: string;
+  border: string;
+  accent: string;
+  badge: string;
+  iconBg: string;
+  caseStudies?: CaseStudyEntry[];
+};
+
+const categories: Category[] = [
   {
     id: 'financial-management',
     icon: '💰',
@@ -68,6 +88,14 @@ const categories = [
     accent: 'text-cyan-700',
     badge: 'bg-cyan-100 text-cyan-700',
     iconBg: 'bg-cyan-100',
+    caseStudies: [
+      {
+        slug: 'dominos-pulse-mis',
+        title: "Domino's PULSE™ System",
+        subtitle: 'How technology transformed Domino\'s into a data-driven digital enterprise',
+        tags: ['PoS System', 'CRM', 'VoIP', 'MIS S-01 & S-02'],
+      },
+    ],
   },
   {
     id: 'data-science',
@@ -165,58 +193,112 @@ export default function CaseStudyHubPage() {
                 key={cat.id}
                 className={`group relative bg-gradient-to-br ${cat.gradient} border ${cat.border} rounded-2xl p-6 flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all duration-200`}
               >
-                {/* Icon */}
-                <div className={`w-12 h-12 ${cat.iconBg} rounded-xl flex items-center justify-center text-2xl mb-4 shadow-sm`}>
-                  {cat.icon}
+                {/* Icon + count badge */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-12 h-12 ${cat.iconBg} rounded-xl flex items-center justify-center text-2xl shadow-sm`}>
+                    {cat.icon}
+                  </div>
+                  {cat.caseStudies && cat.caseStudies.length > 0 && (
+                    <span className={`${cat.badge} text-[10px] font-bold px-2 py-1 rounded-full`}>
+                      {cat.caseStudies.length} case{cat.caseStudies.length > 1 ? 's' : ''}
+                    </span>
+                  )}
                 </div>
 
                 {/* Label + description */}
-                <h3 className={`font-bold text-slate-900 text-base mb-2`}>{cat.label}</h3>
-                <p className="text-slate-500 text-xs leading-relaxed mb-5 flex-1">
+                <h3 className="font-bold text-slate-900 text-base mb-2">{cat.label}</h3>
+                <p className="text-slate-500 text-xs leading-relaxed mb-4 flex-1">
                   {cat.description}
                 </p>
 
-                {/* Empty state */}
-                <div className="bg-white/70 border border-white rounded-xl px-4 py-3 mb-4">
-                  <p className="text-xs text-slate-400 text-center leading-relaxed">
-                    No case studies published yet.
-                    <br />
-                    <span className="text-slate-500 font-medium">New classroom business cases coming soon.</span>
-                  </p>
-                </div>
+                {/* Case studies list OR empty state */}
+                {cat.caseStudies && cat.caseStudies.length > 0 ? (
+                  <div className="space-y-2 mb-4">
+                    {cat.caseStudies.map((cs) => (
+                      <Link
+                        key={cs.slug}
+                        href={`/case-studies/${cs.slug}`}
+                        className="block bg-white/80 hover:bg-white border border-white rounded-xl px-4 py-3 transition-colors group/card"
+                      >
+                        <p className={`text-xs font-bold ${cat.accent} mb-0.5 group-hover/card:underline`}>{cs.title}</p>
+                        <p className="text-[11px] text-slate-500 leading-snug mb-2">{cs.subtitle}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {cs.tags.map((tag) => (
+                            <span key={tag} className={`${cat.badge} text-[9px] font-semibold px-1.5 py-0.5 rounded-md`}>{tag}</span>
+                          ))}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white/70 border border-white rounded-xl px-4 py-3 mb-4">
+                    <p className="text-xs text-slate-400 text-center leading-relaxed">
+                      No case studies published yet.
+                      <br />
+                      <span className="text-slate-500 font-medium">New classroom business cases coming soon.</span>
+                    </p>
+                  </div>
+                )}
 
-                {/* Explore button */}
-                <a
-                  href="#submit"
-                  className={`inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border ${cat.border} ${cat.accent} text-xs font-semibold bg-white/80 hover:bg-white transition-colors group-hover:shadow-sm`}
-                >
-                  Suggest a {cat.label} Case →
-                </a>
+                {/* CTA button */}
+                {cat.caseStudies && cat.caseStudies.length > 0 ? (
+                  <Link
+                    href={`/case-studies/${cat.caseStudies[0].slug}`}
+                    className={`inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border ${cat.border} ${cat.accent} text-xs font-semibold bg-white/80 hover:bg-white transition-colors group-hover:shadow-sm`}
+                  >
+                    Read Case Study →
+                  </Link>
+                ) : (
+                  <a
+                    href="#submit"
+                    className={`inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border ${cat.border} ${cat.accent} text-xs font-semibold bg-white/80 hover:bg-white transition-colors group-hover:shadow-sm`}
+                  >
+                    Suggest a {cat.label} Case →
+                  </a>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Coming Soon Banner ───────────────────────────────── */}
+      {/* ── Featured Case Study Banner ───────────────────────── */}
       <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-8 sm:p-10 text-center">
-            <div className="absolute inset-0 opacity-10 pointer-events-none">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-white rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-cyan-900 via-cyan-950 to-slate-900 rounded-2xl p-8 sm:p-10">
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-400 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500 rounded-full blur-3xl" />
             </div>
-            <div className="relative">
-              <div className="text-4xl mb-4">🚀</div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                Classroom-inspired business discussions will appear here soon.
-              </h2>
-              <p className="text-indigo-200 text-sm max-w-lg mx-auto mb-6">
-                No case studies are published yet — but they are coming. The platform owner is actively reviewing student ideas and preparing curated case studies for each subject.
-              </p>
-              <span className="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white text-xs font-semibold px-4 py-2 rounded-full">
-                ✅ Student submissions are open now
-              </span>
+            <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="w-14 h-14 bg-cyan-500/20 border border-cyan-400/30 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">
+                💻
+              </div>
+              <div className="flex-1">
+                <span className="inline-flex items-center gap-1.5 bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-bold px-2.5 py-1 rounded-full mb-2">
+                  ✨ Now Published — Information Systems
+                </span>
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                  Domino&apos;s PULSE™ System
+                </h2>
+                <p className="text-cyan-200 text-sm leading-relaxed mb-4">
+                  A complete MBA-ready MIS case study — 11 sections, SWOT, viva prep, and a downloadable Word document.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href="/case-studies/dominos-pulse-mis"
+                    className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
+                  >
+                    Read Case Study →
+                  </Link>
+                  <a
+                    href="#submit"
+                    className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
+                  >
+                    📝 Submit Your Idea
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
