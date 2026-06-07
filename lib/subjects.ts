@@ -81,7 +81,15 @@ export const subjects: Subject[] = [
     colorClass: 'text-cyan-700',
     bgClass: 'bg-cyan-50',
     borderClass: 'border-cyan-200',
-    lectures: [],
+    lectures: [
+      {
+        id: 'introduction-to-information-systems',
+        title: 'Introduction to Information Systems',
+        date: '2026-06-07',
+        slug: 'introduction-to-information-systems',
+        description: 'What is IS, data vs information, components & dimensions of IS, management levels, TPS/MIS/DSS/ESS, strategic business objectives, digital firms',
+      },
+    ],
   },
 ];
 
