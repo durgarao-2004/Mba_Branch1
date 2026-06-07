@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import QuizComponent from '@/components/QuizComponent';
-import DownloadButtons from '@/components/DownloadButtons';
+import LectureDownloadButtons from '@/components/LectureDownloadButtons';
 import LectureSidebar, { SidebarSection } from '@/components/LectureSidebar';
 import { TagBadge, DifficultyBadge } from '@/components/TagBadge';
 import LectureHelpfulness from '@/components/LectureHelpfulness';
@@ -119,11 +119,7 @@ export default async function LecturePage({ params }: PageProps) {
 
           {/* Download buttons + report issue */}
           <div className="mb-10">
-            <DownloadButtons
-              pdfPath={lecture.pdfPath}
-              docxPath={lecture.docxPath}
-              title={lecture.title}
-            />
+            <LectureDownloadButtons lecture={lecture} />
             <div className="mt-3">
               <ReportIssueButton lectureTitle={lecture.title} />
             </div>

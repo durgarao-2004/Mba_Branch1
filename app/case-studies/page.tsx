@@ -64,6 +64,14 @@ const categories: Category[] = [
     accent: 'text-rose-700',
     badge: 'bg-rose-100 text-rose-700',
     iconBg: 'bg-rose-100',
+    caseStudies: [
+      {
+        slug: 'grove-fresh-marketing',
+        title: 'Grove Fresh Ltd',
+        subtitle: 'UK organic juice pioneer navigating market maturity — STP, PLC, BCG, Ansoff & Porter applied',
+        tags: ['STP', 'PLC', 'BCG Matrix', 'Ansoff Grid', 'Porter\'s Strategies'],
+      },
+    ],
   },
   {
     id: 'organizational-behavior',
@@ -262,42 +270,66 @@ export default function CaseStudyHubPage() {
         </div>
       </section>
 
-      {/* ── Featured Case Study Banner ───────────────────────── */}
+      {/* ── Featured Case Studies ────────────────────────────── */}
       <section className="py-12 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="relative overflow-hidden bg-gradient-to-br from-cyan-900 via-cyan-950 to-slate-900 rounded-2xl p-8 sm:p-10">
-            <div className="absolute inset-0 opacity-20 pointer-events-none">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-400 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500 rounded-full blur-3xl" />
-            </div>
-            <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <div className="w-14 h-14 bg-cyan-500/20 border border-cyan-400/30 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">
-                💻
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8">
+            <p className="text-sm font-semibold text-indigo-600 tracking-widest uppercase mb-2">Featured</p>
+            <h2 className="text-2xl font-bold text-slate-900">Published Case Studies</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-5">
+            {/* Domino's */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-cyan-900 via-cyan-950 to-slate-900 rounded-2xl p-7">
+              <div className="absolute inset-0 opacity-20 pointer-events-none">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-400 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500 rounded-full blur-3xl" />
               </div>
-              <div className="flex-1">
-                <span className="inline-flex items-center gap-1.5 bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-bold px-2.5 py-1 rounded-full mb-2">
-                  ✨ Now Published — Information Systems
+              <div className="relative">
+                <div className="w-12 h-12 bg-cyan-500/20 border border-cyan-400/30 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                  💻
+                </div>
+                <span className="inline-flex items-center gap-1.5 bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-bold px-2.5 py-1 rounded-full mb-3">
+                  ✨ Information Systems
                 </span>
-                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                <h2 className="text-base font-bold text-white mb-1">
                   Domino&apos;s PULSE™ System
                 </h2>
-                <p className="text-cyan-200 text-sm leading-relaxed mb-4">
-                  A complete MBA-ready MIS case study — 11 sections, SWOT, viva prep, and a downloadable Word document.
+                <p className="text-cyan-200 text-xs leading-relaxed mb-4">
+                  11 sections, SWOT, viva prep — how technology transformed Domino&apos;s into a data-driven digital enterprise.
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  <Link
-                    href="/case-studies/dominos-pulse-mis"
-                    className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
-                  >
-                    Read Case Study →
-                  </Link>
-                  <a
-                    href="#submit"
-                    className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
-                  >
-                    📝 Submit Your Idea
-                  </a>
+                <Link
+                  href="/case-studies/dominos-pulse-mis"
+                  className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-white font-semibold px-4 py-2 rounded-xl transition-colors text-sm"
+                >
+                  Read Case Study →
+                </Link>
+              </div>
+            </div>
+            {/* Grove Fresh */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-rose-900 via-rose-950 to-slate-900 rounded-2xl p-7">
+              <div className="absolute inset-0 opacity-20 pointer-events-none">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-rose-400 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-pink-500 rounded-full blur-3xl" />
+              </div>
+              <div className="relative">
+                <div className="w-12 h-12 bg-rose-500/20 border border-rose-400/30 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                  🎯
                 </div>
+                <span className="inline-flex items-center gap-1.5 bg-rose-500/20 border border-rose-400/30 text-rose-300 text-[10px] font-bold px-2.5 py-1 rounded-full mb-3">
+                  ✨ Marketing Management
+                </span>
+                <h2 className="text-base font-bold text-white mb-1">
+                  Grove Fresh Ltd
+                </h2>
+                <p className="text-rose-200 text-xs leading-relaxed mb-4">
+                  13 sections, SWOT, viva prep — STP, PLC, BCG, Ansoff & Porter applied to a premium organic juice brand at maturity.
+                </p>
+                <Link
+                  href="/case-studies/grove-fresh-marketing"
+                  className="inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-400 text-white font-semibold px-4 py-2 rounded-xl transition-colors text-sm"
+                >
+                  Read Case Study →
+                </Link>
               </div>
             </div>
           </div>
