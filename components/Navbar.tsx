@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import NotificationBell from './NotificationBell';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -60,6 +61,7 @@ export default function Navbar() {
 
           {/* Desktop right actions */}
           <div className="hidden md:flex items-center gap-2">
+            <NotificationBell />
             <Link
               href="/request"
               className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
@@ -75,8 +77,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile: search icon + hamburger */}
+          {/* Mobile: bell + search icon + hamburger */}
           <div className="flex items-center gap-1 md:hidden">
+            <NotificationBell />
             <Link
               href="/search"
               aria-label="Search"

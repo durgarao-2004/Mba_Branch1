@@ -37,10 +37,13 @@
       "Bash(curl -sL http://localhost:3000/subjects/financial-management/introduction-to-financial-management)",
       "Bash(curl -sL http://localhost:3000/)",
       "Read(//tmp/**)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(mkdir -p /workspaces/Mba_Branch1/app/case-studies/dominos-pulse-mis)",
+      "Bash(xargs ls)"
     ],
     "additionalDirectories": [
-      "/Users/harsha/Desktop/MBA AI/app/subjects/[subject]"
+      "/Users/harsha/Desktop/MBA AI/app/subjects/[subject]",
+      "/workspaces/Mba_Branch1/app/case-studies"
     ]
   }
 }
