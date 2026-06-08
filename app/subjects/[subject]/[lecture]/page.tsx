@@ -8,9 +8,12 @@ import { TagBadge, DifficultyBadge } from '@/components/TagBadge';
 import LectureHelpfulness from '@/components/LectureHelpfulness';
 import ReportIssueButton from '@/components/ReportIssueButton';
 import QuickRevision from '@/components/QuickRevision';
+import JsonLd from '@/components/JsonLd';
 import { subjects, getSubjectBySlug } from '@/lib/subjects';
 import { getLecture, getAllLectureSlugs } from '@/lib/content';
 import { LectureTag } from '@/types';
+
+const BASE_URL = 'https://mba.collabex.online';
 
 interface PageProps {
   params: Promise<{ subject: string; lecture: string }>;
@@ -36,9 +39,51 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const lecture = getLecture(subjectSlug, lectureSlug);
   const subject = getSubjectBySlug(subjectSlug);
   if (!lecture || !subject) return { title: 'Lecture Not Found' };
+
+  const title = `${lecture.title} — ${subject.name} Notes`;
+  const description = lecture.summary.slice(0, 155) + (lecture.summary.length > 155 ? '…' : '');
+  const url = `${BASE_URL}/subjects/${subjectSlug}/${lectureSlug}`;
+
   return {
-    title: `${lecture.title} — ${subject.name}`,
-    description: lecture.summary.slice(0, 160),
+    title,
+    description,
+    keywords: [
+      lecture.title,
+      subject.name,
+      'MBA notes',
+      'lecture notes',
+      ...(lecture.concepts?.slice(0, 5) ?? []),
+      ...(lecture.tags ?? []),
+    ],
+    authors: [{ name: 'MBA Learning Hub', url: BASE_URL }],
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: 'article',
+      url,
+      title,
+      description,
+      siteName: 'MBA Learning Hub',
+      publishedTime: lecture.date,
+      modifiedTime: lecture.updatedAt ?? lecture.date,
+      authors: ['MBA Learning Hub'],
+      tags: lecture.tags,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: `${lecture.title} — ${subject.name} | MBA Learning Hub`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/og-image.png'],
+    },
   };
 }
 
@@ -54,15 +99,77 @@ export default async function LecturePage({ params }: PageProps) {
   const lecture = getLecture(subjectSlug, lectureSlug);
   if (!subject || !lecture) notFound();
 
+  const url = `${BASE_URL}/subjects/${subjectSlug}/${lectureSlug}`;
+
   const sidebarSections = lecture.quickRevision
     ? BASE_SIDEBAR_SECTIONS
     : BASE_SIDEBAR_SECTIONS.filter((s) => s.id !== 'quick-revision');
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: lecture.title,
+    description: lecture.summary.slice(0, 160),
+    url,
+    datePublished: lecture.date,
+    dateModified: lecture.updatedAt ?? lecture.date,
+    author: {
+      '@type': 'Organization',
+      name: 'MBA Learning Hub',
+      url: BASE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'MBA Learning Hub',
+      url: BASE_URL,
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    keywords: lecture.concepts?.join(', '),
+    articleSection: subject.name,
+    educationalLevel: 'Graduate',
+    about: {
+      '@type': 'Course',
+      name: subject.name,
+      url: `${BASE_URL}/subjects/${subjectSlug}`,
+    },
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Subjects', item: `${BASE_URL}/subjects` },
+      { '@type': 'ListItem', position: 3, name: subject.name, item: `${BASE_URL}/subjects/${subjectSlug}` },
+      { '@type': 'ListItem', position: 4, name: lecture.title, item: url },
+    ],
+  };
+
+  const quizSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    name: `${lecture.title} — Knowledge Quiz`,
+    url,
+    educationalLevel: 'Graduate',
+    about: { '@type': 'Course', name: subject.name },
+    hasPart: lecture.quiz.map((q) => ({
+      '@type': 'Question',
+      text: q.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: q.options[q.correct],
+      },
+    })),
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-14">
+      <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={quizSchema} />
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-400 mb-8 flex-wrap">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-slate-400 mb-8 flex-wrap">
         <Link href="/" className="hover:text-slate-600 transition-colors">Home</Link>
         <span>/</span>
         <Link href="/subjects" className="hover:text-slate-600 transition-colors">Subjects</Link>

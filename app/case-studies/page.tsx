@@ -3,9 +3,34 @@ import Link from 'next/link';
 import CaseStudySubmitForm from './CaseStudySubmitForm';
 
 export const metadata: Metadata = {
-  title: 'Case Study Hub — MBA Learning Hub',
+  title: 'MBA Case Studies — Real Business Scenarios for MBA Students',
   description:
-    'Real classroom-inspired MBA business scenarios and practical management discussions. Explore case study categories and submit your own business case idea.',
+    'Explore real-world MBA case studies covering Marketing Management, Information Systems, Finance, and more. Classroom-inspired business scenarios with structured analysis for MBA revision.',
+  keywords: [
+    'MBA case studies',
+    'business case studies MBA',
+    'MBA marketing case study',
+    'MBA MIS case study',
+    'real world business examples MBA',
+    'MBA management case studies',
+  ],
+  alternates: {
+    canonical: 'https://mba.collabex.online/case-studies',
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://mba.collabex.online/case-studies',
+    title: 'MBA Case Studies — Real Business Scenarios',
+    description:
+      'Real-world MBA case studies for Marketing, Finance, Information Systems, and more. Structured for MBA student revision and classroom discussion.',
+    siteName: 'MBA Learning Hub',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MBA Case Studies — MBA Learning Hub',
+    description:
+      'Explore real-world MBA case studies for Marketing, Finance, Information Systems, and more.',
+  },
 };
 
 type CaseStudyEntry = {
