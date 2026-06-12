@@ -4,8 +4,6 @@ import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  doc,
-  getDoc,
   addDoc,
   collection,
   serverTimestamp,
@@ -18,16 +16,6 @@ import { useRecentlyViewed, RecentItem } from '@/hooks/useRecentlyViewed';
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
-
-interface UserProfile {
-  uid: string;
-  fullName: string;
-  email: string;
-  semester: string;
-  specialization: string;
-  interests: string[];
-  role: string;
-}
 
 interface MsgForm {
   category: string;
@@ -107,12 +95,10 @@ function getGreeting() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
-  const router                                   = useRouter();
-  const { currentUser, loading: authLoading }    = useAuth();
-  const { items: recentItems }                   = useRecentlyViewed();
-
-  const [profile, setProfile]           = useState<UserProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
+  const router                                                    = useRouter();
+  const { currentUser, userProfile, loading: authLoading,
+          profileLoading }                                        = useAuth();
+  const { items: recentItems }                                    = useRecentlyViewed();
 
   // ── Auth guard ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -120,17 +106,6 @@ export default function DashboardPage() {
       router.replace('/login');
     }
   }, [authLoading, currentUser, router]);
-
-  // ── Fetch Firestore user profile ────────────────────────────────────────────
-  useEffect(() => {
-    if (!currentUser) return;
-    getDoc(doc(db, 'users', currentUser.uid))
-      .then((snap) => {
-        if (snap.exists()) setProfile(snap.data() as UserProfile);
-      })
-      .catch(() => { /* use auth display name as fallback */ })
-      .finally(() => setProfileLoading(false));
-  }, [currentUser]);
 
   // ── Loading screen ──────────────────────────────────────────────────────────
   if (authLoading || !currentUser) {
@@ -144,7 +119,7 @@ export default function DashboardPage() {
     );
   }
 
-  const displayName = profile?.fullName ?? currentUser.displayName ?? 'Student';
+  const displayName = userProfile?.fullName ?? currentUser.displayName ?? 'Student';
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -153,8 +128,9 @@ export default function DashboardPage() {
         {/* ── Welcome header ─────────────────────────────────────────────── */}
         <WelcomeHeader
           name={displayName}
-          semester={profile?.semester}
-          specialization={profile?.specialization}
+          semester={userProfile?.semester}
+          specialization={userProfile?.specialization}
+          role={userProfile?.role}
           loading={profileLoading}
         />
 
@@ -198,14 +174,36 @@ export default function DashboardPage() {
 // Section components
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── Role Badge ────────────────────────────────────────────────────────────────
+// Reads directly from Firestore role field — no hardcoded values.
+
+const ROLE_CONFIG: Record<string, { label: string; cls: string }> = {
+  admin:   { label: '⚡ Admin',   cls: 'bg-rose-400/25 text-rose-200 border-rose-400/40' },
+  mentor:  { label: '🎓 Mentor',  cls: 'bg-purple-400/25 text-purple-200 border-purple-400/40' },
+  student: { label: '✦ Student', cls: 'bg-amber-400/20 text-amber-200 border-amber-400/30' },
+};
+
+function RoleBadge({ role }: { role: string }) {
+  const cfg = ROLE_CONFIG[role] ?? {
+    label: `✦ ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+    cls:   'bg-white/10 text-blue-100 border-white/20',
+  };
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${cfg.cls}`}>
+      {cfg.label}
+    </span>
+  );
+}
+
 // ── Welcome Header ────────────────────────────────────────────────────────────
 
 function WelcomeHeader({
-  name, semester, specialization, loading,
+  name, semester, specialization, role, loading,
 }: {
   name: string;
   semester?: string;
   specialization?: string;
+  role?: string;
   loading: boolean;
 }) {
   return (
@@ -231,9 +229,7 @@ function WelcomeHeader({
                   🎯 {specialization}
                 </span>
               )}
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-amber-400/20 text-amber-200 px-3 py-1 rounded-full border border-amber-400/30">
-                ✦ Student
-              </span>
+              <RoleBadge role={role ?? 'student'} />
             </div>
           )}
           {loading && (

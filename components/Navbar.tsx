@@ -27,7 +27,7 @@ function SearchIcon() {
 export default function Navbar() {
   const pathname              = usePathname();
   const router                = useRouter();
-  const { currentUser, loading, logout } = useAuth();
+  const { currentUser, userProfile, loading, logout } = useAuth();
   const [open, setOpen]       = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -103,14 +103,25 @@ export default function Navbar() {
                     >
                       Dashboard
                     </Link>
-                    {/* Avatar + logout */}
+                    {/* Avatar + role badge + logout */}
                     <div className="flex items-center gap-2 pl-1">
                       <div
                         className="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                        title={currentUser.displayName ?? currentUser.email ?? ''}
+                        title={userProfile?.fullName ?? currentUser.displayName ?? currentUser.email ?? ''}
                       >
                         {initials}
                       </div>
+                      {userProfile?.role && userProfile.role !== 'student' && (
+                        <span className={`hidden lg:inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          userProfile.role === 'admin'
+                            ? 'bg-rose-100 text-rose-700'
+                            : userProfile.role === 'mentor'
+                            ? 'bg-purple-100 text-purple-700'
+                            : 'bg-slate-100 text-slate-600'
+                        }`}>
+                          {userProfile.role === 'admin' ? '⚡ Admin' : userProfile.role === 'mentor' ? '🎓 Mentor' : userProfile.role}
+                        </span>
+                      )}
                       <button
                         onClick={handleLogout}
                         disabled={loggingOut}
@@ -204,9 +215,20 @@ export default function Navbar() {
                       <div className="w-7 h-7 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                         {initials}
                       </div>
-                      <span className="text-xs text-slate-500 truncate">
-                        {currentUser.displayName ?? currentUser.email}
-                      </span>
+                      <div className="min-w-0">
+                        <span className="text-xs text-slate-600 font-medium truncate block">
+                          {userProfile?.fullName ?? currentUser.displayName ?? currentUser.email}
+                        </span>
+                        {userProfile?.role && (
+                          <span className={`text-xs font-semibold ${
+                            userProfile.role === 'admin'  ? 'text-rose-600'   :
+                            userProfile.role === 'mentor' ? 'text-purple-600' :
+                            'text-slate-400'
+                          }`}>
+                            {userProfile.role === 'admin' ? '⚡ Admin' : userProfile.role === 'mentor' ? '🎓 Mentor' : '✦ Student'}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <Link
                       href="/dashboard"
