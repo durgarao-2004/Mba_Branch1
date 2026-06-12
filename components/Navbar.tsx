@@ -1,17 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import NotificationBell from './NotificationBell';
+import { useAuth } from '@/context/AuthContext';
 
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/subjects', label: 'Subjects' },
-  { href: '/case-studies', label: 'Case Studies' },
-  { href: '/attendance', label: 'Attendance' },
-  { href: '/search', label: 'Search' },
-  { href: '/about', label: 'About' },
+  { href: '/',            label: 'Home' },
+  { href: '/subjects',    label: 'Subjects' },
+  { href: '/case-studies',label: 'Case Studies' },
+  { href: '/attendance',  label: 'Attendance' },
+  { href: '/search',      label: 'Search' },
+  { href: '/about',       label: 'About' },
 ];
 
 function SearchIcon() {
@@ -24,8 +25,32 @@ function SearchIcon() {
 }
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const pathname              = usePathname();
+  const router                = useRouter();
+  const { currentUser, loading, logout } = useAuth();
+  const [open, setOpen]       = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await logout();
+      router.push('/');
+    } finally {
+      setLoggingOut(false);
+      setOpen(false);
+    }
+  }
+
+  // Avatar initials from display name or email
+  const initials = currentUser
+    ? (currentUser.displayName ?? currentUser.email ?? 'U')
+        .split(' ')
+        .map((w) => w[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '';
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
@@ -62,22 +87,68 @@ export default function Navbar() {
           {/* Desktop right actions */}
           <div className="hidden md:flex items-center gap-2">
             <NotificationBell />
-            <Link
-              href="/request"
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
-                pathname === '/request'
-                  ? 'bg-violet-50 text-violet-700'
-                  : 'text-slate-600 hover:text-violet-700 hover:bg-violet-50'
-              }`}
-            >
-              ✉ Request Subject
-            </Link>
-            <Link href="/subjects" className="btn-primary text-sm">
-              Start Learning
-            </Link>
+
+            {!loading && (
+              <>
+                {currentUser ? (
+                  /* ── Logged-in state ─────────────────────────────── */
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/dashboard"
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                        pathname === '/dashboard'
+                          ? 'bg-blue-50 text-blue-700'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                    >
+                      Dashboard
+                    </Link>
+                    {/* Avatar + logout */}
+                    <div className="flex items-center gap-2 pl-1">
+                      <div
+                        className="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                        title={currentUser.displayName ?? currentUser.email ?? ''}
+                      >
+                        {initials}
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        disabled={loggingOut}
+                        className="text-xs text-slate-500 hover:text-red-600 font-medium transition-colors px-2 py-1 rounded-lg hover:bg-red-50"
+                      >
+                        {loggingOut ? '…' : 'Logout'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* ── Guest state ─────────────────────────────────── */
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/request"
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                        pathname === '/request'
+                          ? 'bg-violet-50 text-violet-700'
+                          : 'text-slate-600 hover:text-violet-700 hover:bg-violet-50'
+                      }`}
+                    >
+                      ✉ Request Subject
+                    </Link>
+                    <Link
+                      href="/login"
+                      className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                    >
+                      Log in
+                    </Link>
+                    <Link href="/signup" className="btn-primary text-sm">
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
-          {/* Mobile: bell + search icon + hamburger */}
+          {/* Mobile: bell + search + hamburger */}
           <div className="flex items-center gap-1 md:hidden">
             <NotificationBell />
             <Link
@@ -122,26 +193,70 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/request"
-              onClick={() => setOpen(false)}
-              className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                pathname === '/request'
-                  ? 'bg-violet-50 text-violet-700'
-                  : 'text-slate-600 hover:bg-violet-50 hover:text-violet-700'
-              }`}
-            >
-              ✉ Request a Subject
-            </Link>
-            <div className="pt-1">
-              <Link
-                href="/subjects"
-                onClick={() => setOpen(false)}
-                className="btn-primary w-full justify-center"
-              >
-                Start Learning
-              </Link>
-            </div>
+
+            {/* Mobile auth section */}
+            {!loading && (
+              <div className="pt-2 border-t border-slate-100 mt-2 space-y-1">
+                {currentUser ? (
+                  <>
+                    {/* Logged-in mobile */}
+                    <div className="px-3 py-2 flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                        {initials}
+                      </div>
+                      <span className="text-xs text-slate-500 truncate">
+                        {currentUser.displayName ?? currentUser.email}
+                      </span>
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setOpen(false)}
+                      className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      disabled={loggingOut}
+                      className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      {loggingOut ? 'Logging out…' : 'Logout'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {/* Guest mobile */}
+                    <Link
+                      href="/request"
+                      onClick={() => setOpen(false)}
+                      className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        pathname === '/request'
+                          ? 'bg-violet-50 text-violet-700'
+                          : 'text-slate-600 hover:bg-violet-50 hover:text-violet-700'
+                      }`}
+                    >
+                      ✉ Request a Subject
+                    </Link>
+                    <Link
+                      href="/login"
+                      onClick={() => setOpen(false)}
+                      className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+                    >
+                      Log in
+                    </Link>
+                    <div className="pt-1">
+                      <Link
+                        href="/signup"
+                        onClick={() => setOpen(false)}
+                        className="btn-primary w-full justify-center"
+                      >
+                        Sign Up Free
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

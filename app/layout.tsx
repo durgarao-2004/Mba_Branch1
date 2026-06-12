@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FeedbackButton from '@/components/FeedbackButton';
+import ClientProviders from '@/components/ClientProviders';
 import { Analytics } from '@vercel/analytics/react';
 
 const BASE_URL = 'https://mba.collabex.online';
@@ -153,10 +154,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col bg-slate-50">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <FeedbackButton />
+        <ClientProviders>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <FeedbackButton />
+        </ClientProviders>
         <Analytics />
       </body>
     </html>
