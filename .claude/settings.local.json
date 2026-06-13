@@ -43,7 +43,8 @@
       "Bash(node -e \"require\\('docx'\\); console.log\\('docx ok'\\)\")",
       "Bash(mkdir -p /workspaces/Mba_Branch1/content/subjects/data-science/lectures)",
       "Bash(mkdir -p /workspaces/Mba_Branch1/public/downloads)",
-      "Bash(grep -E \"\\\\.tsx$|\\\\.ts$|^d\")"
+      "Bash(grep -E \"\\\\.tsx$|\\\\.ts$|^d\")",
+      "Bash(git add *)"
     ],
     "additionalDirectories": [
       "/Users/harsha/Desktop/MBA AI/app/subjects/[subject]",

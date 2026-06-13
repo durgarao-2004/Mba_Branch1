@@ -14,7 +14,7 @@ const contactChannels = [
   {
     icon: '✉',
     title: 'General Support',
-    email: 'support@mbalearninghub.in',
+    email: 'collabex.market@gmail.com',
     description: 'For account issues, platform bugs, login problems, and general queries.',
     responseTime: 'Within 2 business days',
     color: 'blue',
@@ -22,7 +22,7 @@ const contactChannels = [
   {
     icon: '📚',
     title: 'Content & Academic',
-    email: 'academic@mbalearninghub.in',
+    email: 'collabex.market@gmail.com',
     description: 'For content corrections, academic integrity concerns, and lecture requests.',
     responseTime: 'Within 3 business days',
     color: 'violet',
@@ -30,7 +30,7 @@ const contactChannels = [
   {
     icon: '⚖',
     title: 'Legal & Compliance',
-    email: 'legal@mbalearninghub.in',
+    email: 'collabex.market@gmail.com',
     description: 'For copyright notices, DMCA takedown requests, and legal enquiries.',
     responseTime: 'Within 5 business days',
     color: 'slate',
@@ -38,7 +38,7 @@ const contactChannels = [
   {
     icon: '🤝',
     title: 'Partnerships & Collaborations',
-    email: 'partnerships@mbalearninghub.in',
+    email: 'collabex.market@gmail.com',
     description: 'For college partnerships, company collaborations, sponsorships, and placement tie-ups.',
     responseTime: 'Within 5 business days',
     color: 'emerald',
@@ -48,27 +48,27 @@ const contactChannels = [
 const faqItems = [
   {
     q: 'How do I report a bug or technical issue?',
-    a: 'Use the "Report Issue" button available on every page, or email support@mbalearninghub.in with a description of the issue and your device/browser information.',
+    a: 'Use the "Report Issue" button available on every page, or email collabex.market@gmail.com with a description of the issue and your device/browser information.',
   },
   {
     q: 'How do I request a new subject or lecture?',
-    a: 'Visit the Request a Subject page or email academic@mbalearninghub.in. We consider all student requests and prioritize based on demand and available resources.',
+    a: 'Visit the Request a Subject page or email collabex.market@gmail.com. We consider all student requests and prioritize based on demand and available resources.',
   },
   {
     q: 'I found an error in the notes. What should I do?',
-    a: 'Email academic@mbalearninghub.in with the lecture name, the incorrect section, and the suggested correction. We review all content feedback within 3 business days.',
+    a: 'Email collabex.market@gmail.com with the lecture name, the incorrect section, and the suggested correction. We review all content feedback within 3 business days.',
   },
   {
     q: 'My account has been suspended. How do I appeal?',
-    a: 'Email grievance@mbalearninghub.in with your registered email address and a brief explanation of the situation. Our Grievance Officer reviews all appeals within 7 business days.',
+    a: 'Email collabex.market@gmail.com with your registered email address and a brief explanation of the situation. Our Grievance Officer reviews all appeals within 7 business days.',
   },
   {
     q: 'How do I delete my account?',
-    a: 'Email support@mbalearninghub.in from your registered email address requesting account deletion. We will process the request within 10 business days and confirm deletion.',
+    a: 'Email collabex.market@gmail.com from your registered email address requesting account deletion. We will process the request within 10 business days and confirm deletion.',
   },
   {
     q: 'I want to contribute content or become a mentor. How?',
-    a: 'Email partnerships@mbalearninghub.in with your academic background, area of expertise, and what you would like to contribute. We review all applications individually.',
+    a: 'Email collabex.market@gmail.com with your academic background, area of expertise, and what you would like to contribute. We review all applications individually.',
   },
 ];
 
@@ -118,8 +118,8 @@ export default function ContactPage() {
             <div className="text-sm text-amber-800">
               <p><strong>Name:</strong> MBA Learning Hub Support Team</p>
               <p><strong>Email:</strong>{' '}
-                <a href="mailto:grievance@mbalearninghub.in" className="underline">
-                  grievance@mbalearninghub.in
+                <a href="mailto:collabex.market@gmail.com" className="underline">
+                  collabex.market@gmail.com
                 </a>
               </p>
               <p><strong>Resolution Time:</strong> Within 30 days of receipt</p>
