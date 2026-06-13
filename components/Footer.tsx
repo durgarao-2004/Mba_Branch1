@@ -15,6 +15,7 @@ const feedbackLinks = [
   { href: '/case-studies#submit', label: 'Submit Case Idea' },
   { href: '/request', label: 'Request Subject' },
   { href: '/feedback#report', label: 'Report Issue' },
+  { href: '/contact', label: 'Contact & Support' },
 ];
 
 const subjectLinks = [
@@ -30,7 +31,14 @@ const legalLinks = [
   { href: '/terms', label: 'Terms & Conditions' },
   { href: '/privacy', label: 'Privacy Policy' },
   { href: '/disclaimer', label: 'Disclaimer' },
+  { href: '/refund', label: 'Refund Policy' },
+  { href: '/cookie-policy', label: 'Cookie Policy' },
+  { href: '/community-guidelines', label: 'Community Guidelines' },
+  { href: '/academic-integrity', label: 'Academic Integrity' },
+  { href: '/contact', label: 'Contact & Grievance' },
 ];
+
+const coreLinks = legalLinks.slice(0, 4);
 
 export default function Footer() {
   return (
@@ -56,6 +64,25 @@ export default function Footer() {
             >
               ✉ Request a Subject →
             </Link>
+
+            {/* Social placeholders */}
+            <div className="flex items-center gap-2.5 mt-5">
+              <a
+                href="#linkedin"
+                aria-label="LinkedIn — coming soon"
+                className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-500 flex items-center justify-center text-slate-400 hover:text-white transition-colors text-sm font-bold"
+              >
+                in
+              </a>
+              <a
+                href="#instagram"
+                aria-label="Instagram — coming soon"
+                className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-500 flex items-center justify-center text-slate-400 hover:text-white transition-colors text-xs font-bold"
+              >
+                ig
+              </a>
+              <span className="text-[10px] text-slate-600 leading-tight">Socials<br />coming soon</span>
+            </div>
           </div>
 
           {/* Platform links */}
@@ -86,7 +113,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Feedback */}
+          {/* Community */}
           <div>
             <h3 className="font-semibold text-white text-sm mb-4">Community</h3>
             <ul className="space-y-2.5">
@@ -117,21 +144,16 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 p-3 bg-slate-800 rounded-lg border border-slate-700">
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                These notes are independently prepared summaries for educational and revision purposes only.
-                Not affiliated with any institution.
-              </p>
-            </div>
           </div>
         </div>
 
+        {/* Bottom bar */}
         <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-xs text-slate-500">
             © {new Date().getFullYear()} MBA Learning Hub — Free Academic Learning Platform
           </p>
-          <div className="flex items-center gap-4">
-            {legalLinks.map((link) => (
+          <div className="flex items-center flex-wrap justify-center gap-x-4 gap-y-1">
+            {coreLinks.map((link) => (
               <Link key={link.href} href={link.href} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
                 {link.label}
               </Link>

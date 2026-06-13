@@ -18,6 +18,13 @@ export const subjects: Subject[] = [
         slug: 'introduction-to-financial-management',
         description: 'Meaning, objectives, forms of business, profit vs wealth maximization, agency problem',
       },
+      {
+        id: 'financial-system-markets-institutions',
+        title: 'Financial System, Markets, Institutions & Intermediaries',
+        date: '2026-06-13',
+        slug: 'financial-system-markets-institutions',
+        description: 'Financial system components, types of banks (Commercial, Cooperative, RRB, Foreign, Private), money market vs capital market, primary vs secondary market, debt vs equity, forwards vs futures, mutual funds, NBFCs, RBI, SEBI, IRDAI',
+      },
     ],
   },
   {

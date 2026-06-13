@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useState, useEffect, FormEvent } from 'react';
+import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AdminUser } from './types';
 
@@ -31,6 +31,40 @@ const TARGET_OPTIONS: { value: TargetType; label: string; description: string }[
 ];
 
 export default function AnnouncementsTab({ users, currentUid, currentName, onToast }: Props) {
+  // ── Popup settings state ───────────────────────────────────────────────────
+  const [popupEnabled, setPopupEnabled]     = useState(false);
+  const [popupLoading, setPopupLoading]     = useState(true);
+  const [popupSaving,  setPopupSaving]      = useState(false);
+
+  useEffect(() => {
+    async function loadPopup() {
+      try {
+        const snap = await getDoc(doc(db, 'config', 'launchPopup'));
+        if (snap.exists()) setPopupEnabled(snap.data()?.enabled === true);
+      } catch { /* admin doc not yet created — default to false */ }
+      setPopupLoading(false);
+    }
+    loadPopup();
+  }, []);
+
+  async function savePopup(newEnabled: boolean) {
+    setPopupSaving(true);
+    try {
+      await setDoc(doc(db, 'config', 'launchPopup'), {
+        enabled:   newEnabled,
+        updatedAt: serverTimestamp(),
+        updatedBy: currentUid,
+      });
+      setPopupEnabled(newEnabled);
+      onToast(`Launch popup ${newEnabled ? 'enabled' : 'disabled'} successfully.`);
+    } catch {
+      onToast('Failed to update popup config. Check Firestore permissions.', false);
+    } finally {
+      setPopupSaving(false);
+    }
+  }
+
+  // ── Announcement form state ────────────────────────────────────────────────
   const [form, setForm] = useState<NotifForm>({
     title: '', message: '', targetType: 'all',
     targetUid: '', targetSemester: '', targetSpecialization: '',
@@ -40,7 +74,6 @@ export default function AnnouncementsTab({ users, currentUid, currentName, onToa
   const [sent,     setSent]     = useState(false);
   const [sentInfo, setSentInfo] = useState('');
 
-  // Derive unique semesters and specializations from users
   const semesters       = [...new Set(users.map((u) => u.semester).filter(Boolean) as string[])].sort();
   const specializations = [...new Set(users.map((u) => u.specialization).filter(Boolean) as string[])].sort();
   const nonAdminUsers   = users.filter((u) => !u.isDeleted);
@@ -67,7 +100,7 @@ export default function AnnouncementsTab({ users, currentUid, currentName, onToa
     setSending(true);
 
     try {
-      const doc: Record<string, unknown> = {
+      const docData: Record<string, unknown> = {
         title:      form.title.trim(),
         message:    form.message.trim(),
         targetType: form.targetType,
@@ -77,13 +110,12 @@ export default function AnnouncementsTab({ users, currentUid, currentName, onToa
         readBy:     [],
       };
 
-      if (form.targetType === 'specific')       doc.targetUid          = form.targetUid;
-      if (form.targetType === 'semester')        doc.targetSemester     = form.targetSemester;
-      if (form.targetType === 'specialization')  doc.targetSpecialization = form.targetSpecialization;
+      if (form.targetType === 'specific')       docData.targetUid          = form.targetUid;
+      if (form.targetType === 'semester')        docData.targetSemester     = form.targetSemester;
+      if (form.targetType === 'specialization')  docData.targetSpecialization = form.targetSpecialization;
 
-      await addDoc(collection(db, 'notifications'), doc);
+      await addDoc(collection(db, 'notifications'), docData);
 
-      // Human-readable sent summary
       let info = '';
       if (form.targetType === 'all')            info = 'all users';
       else if (form.targetType === 'specific')   info = nonAdminUsers.find((u) => u.uid === form.targetUid)?.fullName ?? 'selected user';
@@ -116,6 +148,85 @@ export default function AnnouncementsTab({ users, currentUid, currentName, onToa
   return (
     <div className="max-w-2xl space-y-4">
 
+      {/* ── Launch Popup Settings ─────────────────────────────────────────── */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-9 h-9 bg-indigo-900 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+            🚀
+          </div>
+          <div>
+            <h2 className="font-semibold text-slate-900">Launch Popup Settings</h2>
+            <p className="text-xs text-slate-500">
+              Control the bilingual welcome popup shown to visitors on the site
+            </p>
+          </div>
+        </div>
+
+        {popupLoading ? (
+          <div className="flex items-center gap-2 text-slate-400 text-sm py-2">
+            <div className="w-4 h-4 border-2 border-slate-300 border-t-blue-500 rounded-full animate-spin" />
+            Loading popup config…
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <div>
+                <p className="text-sm font-medium text-slate-800">Launch Popup</p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {popupEnabled
+                    ? 'Currently visible to visitors (3-day cooldown per user)'
+                    : 'Currently hidden — visitors will not see it'}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                  popupEnabled ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'
+                }`}>
+                  {popupEnabled ? 'ENABLED' : 'DISABLED'}
+                </span>
+                <button
+                  onClick={() => savePopup(!popupEnabled)}
+                  disabled={popupSaving}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+                    popupEnabled ? 'bg-blue-700' : 'bg-slate-300'
+                  } ${popupSaving ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                      popupEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => savePopup(true)}
+                disabled={popupSaving || popupEnabled}
+                className="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold rounded-xl transition-colors text-sm"
+              >
+                Enable Popup
+              </button>
+              <button
+                onClick={() => savePopup(false)}
+                disabled={popupSaving || !popupEnabled}
+                className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700 disabled:text-slate-300 disabled:border-slate-100 text-slate-700 font-semibold rounded-xl transition-colors text-sm"
+              >
+                Disable Popup
+              </button>
+            </div>
+
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              The popup reads Firestore <code className="bg-slate-100 px-1 rounded">config/launchPopup</code>.
+              Changes take effect immediately for all new visitors. Users who already dismissed it will not see
+              it again for 3 days regardless of this setting.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ── Announcement Form ─────────────────────────────────────────────── */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-9 h-9 bg-blue-900 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">

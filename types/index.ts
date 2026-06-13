@@ -53,7 +53,6 @@ export interface Lecture {
   caseStudy: string;
   takeaways: string[];
   quiz: QuizQuestion[];
-  pdfPath: string;
   docxPath: string;
   quickRevision?: QuickRevision;
 }
