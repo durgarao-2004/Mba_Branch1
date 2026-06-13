@@ -93,6 +93,18 @@ export default function Navbar() {
                 {currentUser ? (
                   /* ── Logged-in state ─────────────────────────────── */
                   <div className="flex items-center gap-2">
+                    {userProfile?.role === 'admin' && (
+                      <Link
+                        href="/admin"
+                        className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                          pathname === '/admin'
+                            ? 'bg-rose-50 text-rose-700'
+                            : 'text-rose-600 hover:text-rose-700 hover:bg-rose-50'
+                        }`}
+                      >
+                        ⚡ Admin
+                      </Link>
+                    )}
                     <Link
                       href="/dashboard"
                       className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
@@ -230,6 +242,15 @@ export default function Navbar() {
                         )}
                       </div>
                     </div>
+                    {userProfile?.role === 'admin' && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setOpen(false)}
+                        className="block px-3 py-2.5 rounded-lg text-sm font-medium text-rose-600 hover:bg-rose-50"
+                      >
+                        ⚡ Admin Portal
+                      </Link>
+                    )}
                     <Link
                       href="/dashboard"
                       onClick={() => setOpen(false)}

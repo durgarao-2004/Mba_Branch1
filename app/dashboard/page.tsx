@@ -7,6 +7,12 @@ import {
   addDoc,
   collection,
   serverTimestamp,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
@@ -21,6 +27,16 @@ interface MsgForm {
   category: string;
   title: string;
   message: string;
+}
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  targetType: 'all' | 'specific';
+  targetUid?: string | null;
+  createdAt?: { seconds: number } | null;
+  readBy?: string[];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -41,33 +57,6 @@ const MESSAGE_CATEGORIES = [
   { value: 'feature-suggestion',   label: '💡 Feature Suggestion'         },
   { value: 'bug-report',           label: '🐛 Report an Issue'            },
   { value: 'other',                label: '✉ Other'                       },
-];
-
-const STATIC_NOTIFICATIONS = [
-  {
-    id: '1',
-    icon: '📚',
-    text: 'New lecture uploaded — Introduction to Information Systems',
-    time: '2 days ago',
-    read: false,
-    href: '/subjects/information-systems/introduction-to-information-systems',
-  },
-  {
-    id: '2',
-    icon: '📊',
-    text: "Domino's PULSE MIS case study is now available",
-    time: '4 days ago',
-    read: false,
-    href: '/case-studies/dominos-pulse-mis',
-  },
-  {
-    id: '3',
-    icon: '🧠',
-    text: 'Quiz available: Introduction to Financial Management',
-    time: '1 week ago',
-    read: true,
-    href: '/subjects/financial-management/introduction-to-financial-management',
-  },
 ];
 
 // Flatten all subjects → lectures with subject info attached
@@ -152,7 +141,7 @@ export default function DashboardPage() {
 
           {/* Right — 1/3 */}
           <div className="space-y-6">
-            <NotificationsCard />
+            <NotificationsCard uid={currentUser.uid} />
             <AttendanceCard />
             <SavedContent />
           </div>
@@ -467,9 +456,67 @@ function QuizZone() {
 
 // ── Notifications Card ────────────────────────────────────────────────────────
 
-function NotificationsCard() {
-  const [items, setItems] = useState(STATIC_NOTIFICATIONS);
-  const unread = items.filter((n) => !n.read).length;
+function NotificationsCard({ uid }: { uid: string }) {
+  const [items, setItems]       = useState<NotificationItem[]>([]);
+  const [fetching, setFetching] = useState(true);
+
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        // Two separate queries to avoid composite index requirement
+        const [allSnap, specificSnap] = await Promise.all([
+          getDocs(query(collection(db, 'notifications'), where('targetType', '==', 'all'))),
+          getDocs(query(collection(db, 'notifications'), where('targetUid', '==', uid))),
+        ]);
+
+        const combined: NotificationItem[] = [
+          ...allSnap.docs.map((d) => ({ id: d.id, ...d.data() }) as NotificationItem),
+          ...specificSnap.docs.map((d) => ({ id: d.id, ...d.data() }) as NotificationItem),
+        ];
+
+        // De-duplicate by id and sort newest first
+        const seen = new Set<string>();
+        const unique = combined
+          .filter((n) => { if (seen.has(n.id)) return false; seen.add(n.id); return true; })
+          .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0))
+          .slice(0, 8);
+
+        setItems(unique);
+      } catch {
+        // show empty state on error
+      } finally {
+        setFetching(false);
+      }
+    }
+
+    fetchNotifications();
+  }, [uid]);
+
+  async function markRead(notifId: string) {
+    try {
+      await updateDoc(doc(db, 'notifications', notifId), { readBy: arrayUnion(uid) });
+      setItems((prev) =>
+        prev.map((n) =>
+          n.id === notifId ? { ...n, readBy: [...(n.readBy ?? []), uid] } : n
+        )
+      );
+    } catch { /* ignore */ }
+  }
+
+  async function markAllRead() {
+    const unreadItems = items.filter((n) => !n.readBy?.includes(uid));
+    await Promise.all(unreadItems.map((n) => markRead(n.id)));
+  }
+
+  const unreadCount = items.filter((n) => !n.readBy?.includes(uid)).length;
+
+  function fmtAge(seconds?: number | null): string {
+    if (!seconds) return '';
+    const diff = Math.floor((Date.now() / 1000) - seconds);
+    if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+  }
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-5">
@@ -477,15 +524,15 @@ function NotificationsCard() {
         <div className="flex items-center gap-2">
           <span className="w-7 h-7 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center text-sm">🔔</span>
           <h2 className="font-semibold text-slate-900">Notifications</h2>
-          {unread > 0 && (
+          {unreadCount > 0 && (
             <span className="w-5 h-5 bg-blue-600 rounded-full text-white text-xs font-bold flex items-center justify-center">
-              {unread}
+              {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
         </div>
-        {unread > 0 && (
+        {unreadCount > 0 && (
           <button
-            onClick={() => setItems((prev) => prev.map((n) => ({ ...n, read: true })))}
+            onClick={markAllRead}
             className="text-xs text-blue-600 hover:underline font-medium"
           >
             Mark all read
@@ -493,28 +540,48 @@ function NotificationsCard() {
         )}
       </div>
 
-      <div className="space-y-1">
-        {items.map((n) => (
-          <Link
-            key={n.id}
-            href={n.href}
-            className={`flex items-start gap-3 px-2 py-2.5 rounded-lg transition-colors ${
-              n.read ? 'opacity-55 hover:opacity-80 hover:bg-slate-50' : 'hover:bg-slate-50'
-            }`}
-          >
-            <div className="relative flex-shrink-0 mt-0.5">
-              <span className="text-base">{n.icon}</span>
-              {!n.read && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-blue-500 rounded-full" />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-slate-700 leading-snug">{n.text}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{n.time}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {fetching ? (
+        <div className="flex items-center justify-center py-6">
+          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : items.length === 0 ? (
+        <div className="text-center py-6">
+          <div className="text-2xl mb-2">🔔</div>
+          <p className="text-xs text-slate-400">No notifications yet.</p>
+          <p className="text-xs text-slate-400 mt-0.5">Check back when the admin posts updates.</p>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {items.map((n) => {
+            const isRead = n.readBy?.includes(uid) ?? false;
+            return (
+              <div
+                key={n.id}
+                onClick={() => !isRead && markRead(n.id)}
+                className={`flex items-start gap-3 px-2 py-2.5 rounded-lg transition-colors cursor-pointer ${
+                  isRead ? 'opacity-60 hover:opacity-80 hover:bg-slate-50' : 'hover:bg-blue-50'
+                }`}
+              >
+                <div className="relative flex-shrink-0 mt-0.5">
+                  <span className="text-base">🔔</span>
+                  {!isRead && (
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-blue-500 rounded-full" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs leading-snug ${isRead ? 'text-slate-500' : 'text-slate-800 font-medium'}`}>
+                    {n.title}
+                  </p>
+                  {n.message && (
+                    <p className="text-xs text-slate-400 mt-0.5 leading-snug truncate">{n.message}</p>
+                  )}
+                  <p className="text-xs text-slate-400 mt-0.5">{fmtAge(n.createdAt?.seconds)}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -619,14 +686,14 @@ function MessageAdmin({
 
     try {
       await addDoc(collection(db, 'messages'), {
-        uid,
-        studentName,
-        studentEmail,
-        category:  form.category,
-        title:     form.title.trim(),
-        message:   form.message.trim(),
-        status:    'open',
-        createdAt: serverTimestamp(),
+        senderUid:   uid,
+        senderName:  studentName,
+        senderEmail: studentEmail,
+        category:    form.category,
+        subject:     form.title.trim(),
+        message:     form.message.trim(),
+        status:      'unread',
+        createdAt:   serverTimestamp(),
       });
       setSent(true);
     } catch {
