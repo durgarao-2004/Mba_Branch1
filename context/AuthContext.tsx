@@ -21,6 +21,12 @@ export interface UserProfile {
   specialization: string;
   interests: string[];
   role: 'student' | 'admin' | 'mentor' | string;
+  // Account state (set by admin)
+  isBlocked?: boolean;
+  isDeleted?: boolean;
+  blockedReason?: string;
+  suspensionEndsAt?: { seconds: number };
+  suspendedReason?: string;
 }
 
 // ── Context shape ─────────────────────────────────────────────────────────────
@@ -28,8 +34,8 @@ export interface UserProfile {
 interface AuthContextValue {
   currentUser:    User | null;
   userProfile:    UserProfile | null;
-  loading:        boolean;   // true until Firebase resolves auth state
-  profileLoading: boolean;   // true while Firestore doc is being fetched
+  loading:        boolean;
+  profileLoading: boolean;
   logout:         () => Promise<void>;
 }
 
@@ -54,23 +60,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setCurrentUser(user);
 
       if (user) {
-        // Fetch Firestore profile every time auth state is confirmed
-        // (covers login, refresh, and tab restore)
         setProfileLoading(true);
         try {
           const snap = await getDoc(doc(db, 'users', user.uid));
-          setUserProfile(snap.exists() ? (snap.data() as UserProfile) : null);
+          if (snap.exists()) {
+            const profile = snap.data() as UserProfile;
+
+            // Enforce block / soft-delete: sign out immediately, show nothing
+            if (profile.isBlocked || profile.isDeleted) {
+              await signOut(auth);
+              // onAuthStateChanged fires again with user=null — cleanup happens there
+              return;
+            }
+
+            setUserProfile(profile);
+          } else {
+            setUserProfile(null);
+          }
         } catch {
           setUserProfile(null);
         } finally {
           setProfileLoading(false);
+          setLoading(false);
         }
       } else {
         setUserProfile(null);
         setProfileLoading(false);
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return unsubscribe;

@@ -15,6 +15,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { useAuth } from '@/context/AuthContext';
+import type { UserProfile } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
 import { subjects } from '@/lib/subjects';
 import { useRecentlyViewed, RecentItem } from '@/hooks/useRecentlyViewed';
@@ -92,11 +93,16 @@ export default function DashboardPage() {
   // ── Auth guard ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (authLoading || profileLoading) return;
-    if (!currentUser) { router.replace('/login'); return; }
-    if (userProfile?.role === 'admin') router.replace('/admin');
+    if (!currentUser)                      { router.replace('/login');     return; }
+    if (userProfile?.role === 'admin')     { router.replace('/admin');     return; }
+    // Redirect suspended users to the suspension screen
+    const now = Date.now() / 1000;
+    if (userProfile?.suspensionEndsAt?.seconds && userProfile.suspensionEndsAt.seconds > now) {
+      router.replace('/suspended');
+    }
   }, [authLoading, profileLoading, currentUser, userProfile, router]);
 
-  // ── Loading screen (wait for profile so admin redirect fires cleanly) ────────
+  // ── Loading screen ───────────────────────────────────────────────────────────
   if (authLoading || profileLoading || !currentUser) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -108,8 +114,10 @@ export default function DashboardPage() {
     );
   }
 
-  // ── Block admin flash while router.replace fires ─────────────────────────────
+  // ── Block admin / suspended flash while router.replace fires ─────────────────
   if (userProfile?.role === 'admin') return null;
+  const nowSec = Date.now() / 1000;
+  if (userProfile?.suspensionEndsAt?.seconds && userProfile.suspensionEndsAt.seconds > nowSec) return null;
 
   const displayName = userProfile?.fullName ?? currentUser.displayName ?? 'Student';
 
@@ -144,7 +152,7 @@ export default function DashboardPage() {
 
           {/* Right — 1/3 */}
           <div className="space-y-6">
-            <NotificationsCard uid={currentUser.uid} />
+            <NotificationsCard uid={currentUser.uid} profile={userProfile} />
             <AttendanceCard />
             <SavedContent />
           </div>
@@ -459,23 +467,34 @@ function QuizZone() {
 
 // ── Notifications Card ────────────────────────────────────────────────────────
 
-function NotificationsCard({ uid }: { uid: string }) {
+function NotificationsCard({ uid, profile }: { uid: string; profile: UserProfile | null }) {
   const [items, setItems]       = useState<NotificationItem[]>([]);
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     async function fetchNotifications() {
       try {
-        // Two separate queries to avoid composite index requirement
-        const [allSnap, specificSnap] = await Promise.all([
+        // Parallel queries — one per targeting dimension (avoids composite indexes)
+        const queryPromises = [
           getDocs(query(collection(db, 'notifications'), where('targetType', '==', 'all'))),
           getDocs(query(collection(db, 'notifications'), where('targetUid', '==', uid))),
-        ]);
-
-        const combined: NotificationItem[] = [
-          ...allSnap.docs.map((d) => ({ id: d.id, ...d.data() }) as NotificationItem),
-          ...specificSnap.docs.map((d) => ({ id: d.id, ...d.data() }) as NotificationItem),
         ];
+        if (profile?.semester) {
+          queryPromises.push(
+            getDocs(query(collection(db, 'notifications'), where('targetSemester', '==', profile.semester)))
+          );
+        }
+        if (profile?.specialization) {
+          queryPromises.push(
+            getDocs(query(collection(db, 'notifications'), where('targetSpecialization', '==', profile.specialization)))
+          );
+        }
+
+        const snaps = await Promise.all(queryPromises);
+
+        const combined: NotificationItem[] = snaps.flatMap((snap) =>
+          snap.docs.map((d) => ({ id: d.id, ...d.data() }) as NotificationItem)
+        );
 
         // De-duplicate by id and sort newest first
         const seen = new Set<string>();
@@ -493,7 +512,7 @@ function NotificationsCard({ uid }: { uid: string }) {
     }
 
     fetchNotifications();
-  }, [uid]);
+  }, [uid, profile?.semester, profile?.specialization]);
 
   async function markRead(notifId: string) {
     try {
