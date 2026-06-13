@@ -97,6 +97,60 @@ export default function DisclaimerPage() {
             user&apos;s own risk.
           </p>
         </Section>
+
+        <Section title="7. AI-Generated Content Disclaimer">
+          <p>
+            Some content on MBA Learning Hub is created, summarized, or enhanced using artificial
+            intelligence (AI) tools including large language models. AI-generated content has been
+            reviewed and edited by our team; however, it may still contain:
+          </p>
+          <ul>
+            <li>Factual inaccuracies or outdated information</li>
+            <li>Oversimplified explanations of complex academic concepts</li>
+            <li>Hallucinated statistics, figures, or citations</li>
+            <li>Content that may not align with your institution&apos;s specific syllabus</li>
+          </ul>
+          <p>
+            <strong>You must always verify AI-generated content</strong> against your official textbooks,
+            faculty materials, and peer-reviewed sources before using it for academic submissions,
+            professional decisions, or high-stakes study. Never cite MBA Learning Hub as a primary
+            academic source.
+          </p>
+        </Section>
+
+        <Section title="8. Placement & Career Outcomes Disclaimer">
+          <p>
+            MBA Learning Hub does not guarantee any placement outcomes, career advancement, salary
+            improvements, or professional success as a result of using the Platform. Any references
+            to placement preparation, career tools, or company onboarding features are provided as
+            supplementary learning resources only.
+          </p>
+          <p>
+            Career outcomes depend on a wide range of individual factors including qualifications,
+            experience, interview performance, market conditions, and institutional credibility.
+            MBA Learning Hub makes no representation that use of the Platform will lead to job offers,
+            interviews, internships, or any specific career outcome.
+          </p>
+        </Section>
+
+        <Section title="9. Platform Launch Features Disclaimer">
+          <p>
+            MBA Learning Hub may announce upcoming features including but not limited to: referral
+            rewards, company onboarding partnerships, AI-powered revision tools, certifications, and
+            placement integrations. These announcements represent planned development roadmap items
+            and are not binding commitments. Features may be delayed, modified, or discontinued
+            without prior notice. Availability timelines are indicative only.
+          </p>
+        </Section>
+
+        <Section title="10. Contact for Concerns">
+          <p>
+            If you identify content on this Platform that is factually incorrect, potentially
+            misleading, or in violation of copyright, please contact us immediately at{' '}
+            academic@mbalearninghub.in. We take content accuracy seriously and will investigate
+            all legitimate reports promptly.
+          </p>
+        </Section>
       </div>
 
       <div className="mt-10 pt-8 border-t border-slate-200 flex flex-wrap gap-4">

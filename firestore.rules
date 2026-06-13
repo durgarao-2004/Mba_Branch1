@@ -243,6 +243,18 @@ service cloud.firestore {
 
 
     // ═════════════════════════════════════════════════════════════════════════
+    // CONFIG  /config/{configId}
+    // Platform configuration documents (e.g. launchPopup, featureFlags)
+    // Public read so unauthenticated visitors can check popup enabled state.
+    // Only admins may write — prevents students from toggling site-wide config.
+    // ═════════════════════════════════════════════════════════════════════════
+    match /config/{configId} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+
+
+    // ═════════════════════════════════════════════════════════════════════════
     // CATCH-ALL: deny any collection not explicitly listed above
     // ═════════════════════════════════════════════════════════════════════════
     match /{document=**} {

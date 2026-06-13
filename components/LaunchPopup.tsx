@@ -5,41 +5,41 @@ import Link from 'next/link';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-const COOLDOWN_MS  = 3 * 24 * 60 * 60 * 1000; // 3 days
+const COOLDOWN_MS  = 24 * 60 * 60 * 1000; // 24 hours
 const LS_KEY       = 'mba_hub_popup_last_shown';
 
 const CONTENT = {
   en: {
-    badge:    'Official Launch — Coming Soon',
-    headline: 'MBA Learning Hub is Launching Officially!',
-    subline:  'Register early and become part of the first student community.',
+    badge:    'Big Features Launching Soon',
+    headline: 'MBA Learning Hub — Exciting Features Coming!',
+    subline:  'We are launching company onboarding, referrals, certifications, AI revision, and placement features soon. Register now to get early access.',
     features: [
-      'AI-powered MBA learning',
-      'Smart revision systems',
-      'Quiz & attendance tools',
-      'Placement-focused learning',
-      'Upcoming referral rewards',
-      'Company collaborations coming soon',
+      'Company onboarding & partnerships',
+      'Referral rewards program',
+      'AI-powered revision engine',
+      'Certifications & skill badges',
+      'Placement preparation tools',
+      'Smart quiz & attendance system',
     ],
-    cta1:   'Register Now',
-    cta2:   'Explore Platform',
+    cta1:   'Start Learning',
+    cta2:   'Explore Subjects',
     cta3:   'Maybe Later',
     toggle: 'हिंदी में पढ़ें',
   },
   hi: {
-    badge:    'आधिकारिक लॉन्च — जल्द आ रहा है',
-    headline: 'MBA Learning Hub जल्द ही आधिकारिक रूप से लॉन्च होगा!',
-    subline:  'अभी register करें और first student community का हिस्सा बनें।',
+    badge:    'नई Features — जल्द आ रही हैं',
+    headline: 'MBA Learning Hub पर बड़े बदलाव आने वाले हैं!',
+    subline:  'अगले 4 महीनों में नई features launch होने वाली हैं। अभी register करें और early access पाएँ।',
     features: [
-      'AI-powered MBA learning',
-      'Smart revision system',
-      'Quiz और attendance tools',
-      'Placement-focused learning',
-      'Referral rewards जल्द आने वाले हैं',
-      'बड़ी companies के collaborations जल्द शुरू होंगे',
+      'Company onboarding & placements',
+      'Referral rewards program',
+      'AI-powered revision system',
+      'Certifications और skill badges',
+      'Placement preparation tools',
+      'Smart quiz & attendance tracker',
     ],
-    cta1:   'अभी Register करें',
-    cta2:   'Platform Explore करें',
+    cta1:   'Start Learning',
+    cta2:   'Subjects देखें',
     cta3:   'बाद में',
     toggle: 'Read in English',
   },

@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FeedbackButton from '@/components/FeedbackButton';
+import LaunchPopup from '@/components/LaunchPopup';
 import ClientProviders from '@/components/ClientProviders';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -159,6 +160,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <FeedbackButton />
+          <LaunchPopup />
         </ClientProviders>
         <Analytics />
       </body>

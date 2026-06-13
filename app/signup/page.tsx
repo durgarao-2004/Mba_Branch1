@@ -61,6 +61,7 @@ export default function SignupPage() {
     specialization:  '',
   });
   const [interests, setInterests]   = useState<string[]>([]);
+  const [consentChecked, setConsentChecked] = useState(false);
   const [error, setError]           = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading]       = useState(false);
@@ -91,6 +92,7 @@ export default function SignupPage() {
                                          errors.confirmPassword = 'Passwords do not match.';
     if (!form.semester)                  errors.semester        = 'Please select your semester.';
     if (!form.specialization)            errors.specialization  = 'Please select your specialization.';
+    if (!consentChecked)                 errors.consent         = 'You must agree to our Terms & Privacy Policy to continue.';
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -266,6 +268,31 @@ export default function SignupPage() {
               </div>
             </div>
 
+            {/* Consent checkbox */}
+            <div className="pt-1">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={consentChecked}
+                  onChange={(e) => {
+                    setConsentChecked(e.target.checked);
+                    setFieldErrors((prev) => ({ ...prev, consent: '' }));
+                  }}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-blue-700 flex-shrink-0 cursor-pointer"
+                />
+                <span className="text-xs text-slate-600 leading-relaxed group-hover:text-slate-800 transition-colors">
+                  I have read and agree to the{' '}
+                  <Link href="/terms" className="text-blue-600 font-medium hover:underline">Terms &amp; Conditions</Link>
+                  {' '}and{' '}
+                  <Link href="/privacy" className="text-blue-600 font-medium hover:underline">Privacy Policy</Link>
+                  {' '}of MBA Learning Hub. I understand that platform content is for educational use only.
+                </span>
+              </label>
+              {fieldErrors.consent && (
+                <p className="mt-1.5 text-xs text-red-600 ml-7">{fieldErrors.consent}</p>
+              )}
+            </div>
+
             {/* Submit */}
             <button
               type="submit"
@@ -286,10 +313,7 @@ export default function SignupPage() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-5">
-          By signing up you agree to our{' '}
-          <Link href="/terms" className="underline hover:text-slate-600">Terms</Link>
-          {' '}and{' '}
-          <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link>.
+          Free platform — no payment required.
         </p>
       </div>
     </div>
