@@ -21,8 +21,13 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     setError('');
 
+    const actionCodeSettings = {
+      url: 'https://mba.collabex.online/reset-password',
+      handleCodeInApp: true,
+    };
+
     try {
-      await sendPasswordResetEmail(auth, email.trim());
+      await sendPasswordResetEmail(auth, email.trim(), actionCodeSettings);
       setSent(true);
     } catch (err: unknown) {
       const code = (err as { code?: string }).code ?? '';

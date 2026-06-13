@@ -91,13 +91,13 @@ export default function DashboardPage() {
 
   // ── Auth guard ──────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!authLoading && !currentUser) {
-      router.replace('/login');
-    }
-  }, [authLoading, currentUser, router]);
+    if (authLoading || profileLoading) return;
+    if (!currentUser) { router.replace('/login'); return; }
+    if (userProfile?.role === 'admin') router.replace('/admin');
+  }, [authLoading, profileLoading, currentUser, userProfile, router]);
 
-  // ── Loading screen ──────────────────────────────────────────────────────────
-  if (authLoading || !currentUser) {
+  // ── Loading screen (wait for profile so admin redirect fires cleanly) ────────
+  if (authLoading || profileLoading || !currentUser) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -107,6 +107,9 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  // ── Block admin flash while router.replace fires ─────────────────────────────
+  if (userProfile?.role === 'admin') return null;
 
   const displayName = userProfile?.fullName ?? currentUser.displayName ?? 'Student';
 

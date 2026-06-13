@@ -105,16 +105,18 @@ export default function Navbar() {
                         ⚡ Admin Portal
                       </Link>
                     )}
-                    <Link
-                      href="/dashboard"
-                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
-                        pathname === '/dashboard'
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                      }`}
-                    >
-                      Dashboard
-                    </Link>
+                    {userProfile?.role !== 'admin' && (
+                      <Link
+                        href="/dashboard"
+                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                          pathname === '/dashboard'
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      >
+                        Dashboard
+                      </Link>
+                    )}
                     {/* Avatar + logout */}
                     <div className="flex items-center gap-2 pl-1">
                       <div
@@ -225,13 +227,11 @@ export default function Navbar() {
                         <span className="text-xs text-slate-600 font-medium truncate block">
                           {userProfile?.fullName ?? currentUser.displayName ?? currentUser.email}
                         </span>
-                        {userProfile?.role && (
+                        {userProfile?.role && userProfile.role !== 'admin' && (
                           <span className={`text-xs font-semibold ${
-                            userProfile.role === 'admin'  ? 'text-rose-600'   :
-                            userProfile.role === 'mentor' ? 'text-purple-600' :
-                            'text-slate-400'
+                            userProfile.role === 'mentor' ? 'text-purple-600' : 'text-slate-400'
                           }`}>
-                            {userProfile.role === 'admin' ? '⚡ Admin' : userProfile.role === 'mentor' ? '🎓 Mentor' : '✦ Student'}
+                            {userProfile.role === 'mentor' ? '🎓 Mentor' : '✦ Student'}
                           </span>
                         )}
                       </div>
@@ -245,13 +245,15 @@ export default function Navbar() {
                         ⚡ Admin Portal
                       </Link>
                     )}
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setOpen(false)}
-                      className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
-                    >
-                      Dashboard
-                    </Link>
+                    {userProfile?.role !== 'admin' && (
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setOpen(false)}
+                        className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+                      >
+                        Dashboard
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       disabled={loggingOut}
