@@ -97,6 +97,13 @@ export const subjects: Subject[] = [
         slug: 'introduction-to-information-systems',
         description: 'What is IS, data vs information, components & dimensions of IS, management levels, TPS/MIS/DSS/ESS, strategic business objectives, digital firms',
       },
+      {
+        id: 'business-process-reengineering',
+        title: 'Business Process Reengineering (BPR) & Process Integration',
+        date: '2026-06-13',
+        slug: 'business-process-reengineering',
+        description: 'Business process vs function, cross-functional workflows, Procure-to-Pay, Ford Motors BPR case study, three-way matching, IT-enabled transformation, ERP/SAP integration, BPR vs BPI',
+      },
     ],
   },
 ];
