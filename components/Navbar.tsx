@@ -96,13 +96,13 @@ export default function Navbar() {
                     {userProfile?.role === 'admin' && (
                       <Link
                         href="/admin"
-                        className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
                           pathname === '/admin'
                             ? 'bg-rose-50 text-rose-700'
                             : 'text-rose-600 hover:text-rose-700 hover:bg-rose-50'
                         }`}
                       >
-                        ⚡ Admin
+                        ⚡ Admin Portal
                       </Link>
                     )}
                     <Link
@@ -115,7 +115,7 @@ export default function Navbar() {
                     >
                       Dashboard
                     </Link>
-                    {/* Avatar + role badge + logout */}
+                    {/* Avatar + logout */}
                     <div className="flex items-center gap-2 pl-1">
                       <div
                         className="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
@@ -123,15 +123,9 @@ export default function Navbar() {
                       >
                         {initials}
                       </div>
-                      {userProfile?.role && userProfile.role !== 'student' && (
-                        <span className={`hidden lg:inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full ${
-                          userProfile.role === 'admin'
-                            ? 'bg-rose-100 text-rose-700'
-                            : userProfile.role === 'mentor'
-                            ? 'bg-purple-100 text-purple-700'
-                            : 'bg-slate-100 text-slate-600'
-                        }`}>
-                          {userProfile.role === 'admin' ? '⚡ Admin' : userProfile.role === 'mentor' ? '🎓 Mentor' : userProfile.role}
+                      {userProfile?.role === 'mentor' && (
+                        <span className="hidden lg:inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                          🎓 Mentor
                         </span>
                       )}
                       <button
