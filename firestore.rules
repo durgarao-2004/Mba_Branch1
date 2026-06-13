@@ -1,0 +1,252 @@
+rules_version = '2';
+// ─────────────────────────────────────────────────────────────────────────────
+// MBA Learning Hub — Firestore Security Rules
+// ─────────────────────────────────────────────────────────────────────────────
+// Collections:
+//   users        — student / admin / mentor profiles
+//   messages     — student → admin inbox
+//   notifications — admin announcements (targeted by uid / semester / specialization)
+//   adminLogs    — immutable audit trail (admin-only)
+//
+// Enforcement model:
+//   • Blocked / deleted users are signed out by AuthContext the moment their
+//     profile is loaded — but rules provide the server-side backstop.
+//   • Role is stored in Firestore, not in custom claims (no Admin SDK in static
+//     export).  Rules therefore verify role via get() on /users/{uid}.
+//   • get() and exists() results are cached per-request by Firestore, so
+//     multiple helper calls inside one request evaluation are free.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // HELPER FUNCTIONS
+    // ═════════════════════════════════════════════════════════════════════════
+
+    // True when the request carries a valid Firebase Auth token.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // True when the caller's profile document exists in /users.
+    // Using exists() in addition to get() makes the block checks robust
+    // against edge cases where Auth has a user but no Firestore profile yet.
+    function profileExists() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    // Fetch the caller's Firestore profile.
+    // Result is cached for the lifetime of this request evaluation.
+    function callerProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // True when the caller is authenticated, has a profile, and is neither
+    // blocked nor soft-deleted.
+    function isActiveUser() {
+      return isAuthenticated()
+          && profileExists()
+          && callerProfile().isBlocked  != true
+          && callerProfile().isDeleted  != true;
+    }
+
+    // True when the caller is an active user with role == 'admin'.
+    function isAdmin() {
+      return isAuthenticated()
+          && profileExists()
+          && callerProfile().role      == 'admin'
+          && callerProfile().isBlocked != true
+          && callerProfile().isDeleted != true;
+    }
+
+    // Returns true when an update request attempts to modify any field that
+    // must only be written by an admin (moderation / role management fields).
+    // Students are blocked from touching these even on their own profile.
+    function touchesAdminFields() {
+      let restricted = [
+        'role',
+        'isBlocked',   'isDeleted',
+        'blockedReason', 'blockedAt', 'blockedBy',
+        'suspensionEndsAt', 'suspendedBy', 'suspendedReason',
+        'deletedAt',   'deletedBy'
+      ];
+      return request.resource.data
+               .diff(resource.data)
+               .affectedKeys()
+               .hasAny(restricted);
+    }
+
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // USERS  /users/{uid}
+    // ═════════════════════════════════════════════════════════════════════════
+    match /users/{uid} {
+
+      // ── Read ────────────────────────────────────────────────────────────────
+
+      // Every authenticated user must be able to read their own profile.
+      // AuthContext calls getDoc on every page load to check block/delete/role.
+      allow read: if isAuthenticated() && request.auth.uid == uid;
+
+      // Admins read ALL profiles in UserManagementTab.
+      allow read: if isAdmin();
+
+
+      // ── Create ──────────────────────────────────────────────────────────────
+
+      // Signup: a new user writes their own document.
+      // Enforces:
+      //   - Can only create their own doc (uid == auth.uid)
+      //   - Initial role MUST be 'student' — blocks privilege escalation at signup
+      //   - Cannot pre-set any moderation / block fields
+      allow create: if isAuthenticated()
+                    && request.auth.uid == uid
+                    && request.resource.data.role      == 'student'
+                    && request.resource.data.isBlocked  != true
+                    && request.resource.data.isDeleted  != true;
+
+
+      // ── Update ──────────────────────────────────────────────────────────────
+
+      // Students can update their own non-privileged fields
+      // (fullName, semester, specialization, interests, etc.)
+      // They CANNOT touch role, isBlocked, or any admin-controlled field.
+      allow update: if isAuthenticated()
+                    && request.auth.uid == uid
+                    && !touchesAdminFields();
+
+      // Admins can update any profile for moderation purposes:
+      // block, suspend, change role, soft-delete, etc.
+      allow update: if isAdmin();
+
+
+      // ── Delete ──────────────────────────────────────────────────────────────
+
+      // Hard deletion is disabled system-wide.
+      // Admins use soft-delete: isDeleted: true + isBlocked: true.
+      // This preserves the audit trail and prevents orphaned adminLog entries.
+      allow delete: if false;
+    }
+
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // MESSAGES  /messages/{messageId}
+    // Student → admin contact form submissions
+    // ═════════════════════════════════════════════════════════════════════════
+    match /messages/{messageId} {
+
+      // ── Read ────────────────────────────────────────────────────────────────
+
+      // Admins read all messages in the Messages tab.
+      allow read: if isAdmin();
+
+      // Students can read only their own sent messages.
+      // (resource.data access is fine for get() — single document reads.)
+      allow read: if isActiveUser()
+                  && resource.data.senderUid == request.auth.uid;
+
+
+      // ── Create ──────────────────────────────────────────────────────────────
+
+      // Active (non-blocked) users can submit messages.
+      // Rules enforce:
+      //   - senderUid must equal the caller's uid → no impersonation
+      //   - Both senderUid and message body are required fields
+      allow create: if isActiveUser()
+                    && request.resource.data.senderUid == request.auth.uid
+                    && request.resource.data.keys().hasAll(['senderUid', 'message']);
+
+
+      // ── Update ──────────────────────────────────────────────────────────────
+
+      // Only admins can update messages (mark as read, change status, etc.)
+      allow update: if isAdmin();
+
+
+      // ── Delete ──────────────────────────────────────────────────────────────
+
+      // Messages are never deleted — they form an implicit audit trail.
+      allow delete: if false;
+    }
+
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // NOTIFICATIONS  /notifications/{notifId}
+    // Admin-created announcements targeted to users
+    // ═════════════════════════════════════════════════════════════════════════
+    match /notifications/{notifId} {
+
+      // ── Admin: full access ───────────────────────────────────────────────────
+      allow read, write: if isAdmin();
+
+
+      // ── Student read: targeted notifications only ────────────────────────────
+      // The dashboard runs four parallel queries:
+      //   1. where('targetType', '==', 'all')
+      //   2. where('targetUid',  '==', uid)
+      //   3. where('targetSemester',       '==', semester)
+      //   4. where('targetSpecialization', '==', specialization)
+      //
+      // Firestore rule evaluation: every document returned by a query must pass
+      // the rule individually.  The OR conditions below are structured to align
+      // exactly with the query filters so no returned document is ever denied.
+      //
+      // Note: we check targetSemester/targetSpecialization directly (without
+      // requiring targetType to match) so that documents with targetType='all'
+      // that also happen to have those fields set still pass without error.
+      allow read: if isActiveUser() && (
+        resource.data.targetType         == 'all'
+        || resource.data.targetUid       == request.auth.uid
+        || resource.data.targetSemester  == callerProfile().semester
+        || resource.data.targetSpecialization == callerProfile().specialization
+      );
+
+
+      // ── Student update: mark as read only ───────────────────────────────────
+      // Students may only add their uid to the readBy array.
+      // Rules enforce:
+      //   - ONLY the readBy field may change (no other fields)
+      //   - Existing readBy entries cannot be removed (append-only)
+      allow update: if isActiveUser()
+                    && request.resource.data
+                                       .diff(resource.data)
+                                       .affectedKeys()
+                                       .hasOnly(['readBy'])
+                    && request.resource.data.readBy
+                                       .hasAll(resource.data.readBy);
+
+
+      // ── Student create / delete: forbidden ──────────────────────────────────
+      // Only admins (covered by full-access rule above) may create or delete
+      // notification documents.
+      allow create, delete: if isAdmin();
+    }
+
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // ADMIN LOGS  /adminLogs/{logId}
+    // Immutable audit trail for all admin actions
+    // ═════════════════════════════════════════════════════════════════════════
+    match /adminLogs/{logId} {
+
+      // Only active admins can read audit logs.
+      // Students must never be able to access this collection.
+      allow read: if isAdmin();
+
+      // Only active admins can append new log entries.
+      allow create: if isAdmin();
+
+      // Audit logs are immutable — no update or delete ever.
+      allow update, delete: if false;
+    }
+
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // CATCH-ALL: deny any collection not explicitly listed above
+    // ═════════════════════════════════════════════════════════════════════════
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

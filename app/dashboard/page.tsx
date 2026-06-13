@@ -34,8 +34,10 @@ interface NotificationItem {
   id: string;
   title: string;
   message: string;
-  targetType: 'all' | 'specific';
+  targetType: 'all' | 'specific' | 'semester' | 'specialization';
   targetUid?: string | null;
+  targetSemester?: string | null;
+  targetSpecialization?: string | null;
   createdAt?: { seconds: number } | null;
   readBy?: string[];
 }
