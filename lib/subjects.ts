@@ -70,7 +70,15 @@ export const subjects: Subject[] = [
     colorClass: 'text-amber-700',
     bgClass: 'bg-amber-50',
     borderClass: 'border-amber-200',
-    lectures: [],
+    lectures: [
+      {
+        id: 'data-types-measurement-and-visualization',
+        title: 'Data Types, Measurement Scales & Business Visualization',
+        date: '2026-06-13',
+        slug: 'data-types-measurement-and-visualization',
+        description: 'Cross-sectional vs longitudinal data, primary vs secondary, NOIR measurement scales, balanced/unbalanced Likert, chart selection guide, and all measures of central tendency with MBA business applications',
+      },
+    ],
   },
   {
     id: 'information-systems',
